@@ -25,7 +25,7 @@ public class ParseXml {
 
     }
 
-    public Map<String, CMYK> getOracalsMap(File xmlSource) {
+    public static Map<String, CMYK> getOracalsMap(File xmlSource) {
         if (xmlSource == null) {
             return new TreeMap<String, CMYK>();
         }

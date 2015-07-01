@@ -8,6 +8,42 @@
   <artifactId>coolorMaven</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <repositories>
+    <repository>
+      <id>maven.geotoolkit</id>
+      <url>http://maven.geotoolkit.org/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_core</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+
+
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
