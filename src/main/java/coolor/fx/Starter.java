@@ -7,15 +7,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 
 public class Starter extends Application {
@@ -48,7 +44,7 @@ public class Starter extends Application {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            loader.setLocation(classloader.getResource("mainPane.fxml"));
+            loader.setLocation(classloader.getResource("coolor/fx/mainPane.fxml"));
             rootLayout = (Pane)loader.load();
 
             // Show the scene containing the root layout.
