@@ -13,20 +13,25 @@
       <id>maven.geotoolkit</id>
       <url>http://maven.geotoolkit.org/</url>
     </repository>
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Development Snapshot Repository</name>
+      <url>https://repository.apache.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-imaging</artifactId>
+    <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -41,6 +46,12 @@
       <version>1.2.17</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.javafxdata</groupId>
+      <artifactId>datafx-core</artifactId>
+      <version>2.0b5</version>
+      <type>jar</type>
+    </dependency>
 
   </dependencies>
 

@@ -1,7 +1,5 @@
 package coolor.fx;
 
-import coolor.colorspaces.CMYK;
-import coolor.parcer.ParseXml;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,20 +10,19 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.net.URL;
 
 public class Starter extends Application {
     private Stage primaryStage;
     private Pane rootLayout;
-    private ObservableList<SpotColorModel> predefinedSpots = FXCollections.observableArrayList();
 
     public Starter(){
-        Map<String, CMYK> preloaded = ParseXml.getOracalsMap(new File(Starter.class.getClassLoader().getResource("oracals.xml").getPath()));
-        for (String s : preloaded.keySet()) {
-            SpotColorModel tempModel = new SpotColorModel(s, preloaded.get(s));
-            predefinedSpots.add(tempModel);
-        }
-        System.out.println("hui");
+//        Map<String, CMYK> preloaded = ParseXml.getOracalsMap(new File(Starter.class.getClassLoader().getResource("oracals.xml").getPath()));
+//        for (String s : preloaded.keySet()) {
+//            SpotColorModel tempModel = new SpotColorModel(s, preloaded.get(s));
+//            predefinedSpots.add(tempModel);
+//        }
+//        System.out.println("hui");
     }
 
     @Override
@@ -33,7 +30,6 @@ public class Starter extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
         initRootLayout();
-
     }
 
     /**
@@ -43,10 +39,9 @@ public class Starter extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            loader.setLocation(classloader.getResource("coolor/fx/mainPane.fxml"));
+            File fxmlMain = new File("src/main/java/coolor/fx/mainPane.fxml");
+            loader.setLocation(fxmlMain.toURL());
             rootLayout = (Pane)loader.load();
-
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -58,5 +53,13 @@ public class Starter extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 }

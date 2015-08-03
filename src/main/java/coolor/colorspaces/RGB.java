@@ -1,9 +1,11 @@
 package coolor.colorspaces;
 
+import coolor.type.ColorId;
+
 /**
  * Created by Padonag on 24.09.2014.
  */
-public class RGB {
+public class RGB implements Colorspace{
 
     private int red;
     private int green;
@@ -68,5 +70,9 @@ public class RGB {
         result = 31 * result + green;
         result = 31 * result + blue;
         return result;
+    }
+
+    public ColorId spaceName() {
+        return ColorId.RGB;
     }
 }

@@ -1,9 +1,11 @@
 package coolor.colorspaces;
 
+import coolor.type.ColorId;
+
 /**
  * Created by Padonag on 24.09.2014.
  */
-public class CMYK {
+public class CMYK implements Colorspace {
     private double cyan;
     private double magenta;
     private double yellow;
@@ -85,5 +87,9 @@ public class CMYK {
         temp = Double.doubleToLongBits(black);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    public ColorId spaceName() {
+        return ColorId.CMYK;
     }
 }

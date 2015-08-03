@@ -1,9 +1,11 @@
 package coolor.colorspaces;
 
+import coolor.type.ColorId;
+
 /**
  * Created by Padonag on 24.09.2014.
  */
-public class Hex {
+public class Hex implements Colorspace {
     private static final String EMPTY_STRING = "";
 
     private String hexRed;
@@ -67,5 +69,9 @@ public class Hex {
         result = 31 * result + hexGreen.hashCode();
         result = 31 * result + hexBlue.hashCode();
         return result;
+    }
+
+    public ColorId spaceName() {
+        return ColorId.HEX;
     }
 }
