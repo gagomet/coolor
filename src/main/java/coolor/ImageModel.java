@@ -35,17 +35,21 @@ public class ImageModel {
     private IntegerProperty densityWidth;
     private IntegerProperty densityHeight;
 
-    public ImageModel(File file) {
+    public ImageModel(File file, boolean checkbox) {
         try {
             name = new SimpleStringProperty(file.getName());
             ImageInfo imageInfo = Imaging.getImageInfo(file);
-            quantity = new SimpleIntegerProperty(getFileQuantity(file.getName()));
+            if (checkbox) {
+                quantity = new SimpleIntegerProperty(getFileQuantity(file.getName()));
+            } else {
+                quantity = new SimpleIntegerProperty(1);
+            }
             colorspace = new SimpleObjectProperty<ImageInfo.ColorType>(imageInfo.getColorType());
             width = new SimpleFloatProperty(imageInfo.getPhysicalWidthInch() * INCH_CM_COEF);
             height = new SimpleFloatProperty(imageInfo.getPhysicalHeightInch() * INCH_CM_COEF);
             densityWidth = new SimpleIntegerProperty(imageInfo.getPhysicalWidthDpi());
             densityHeight = new SimpleIntegerProperty(imageInfo.getPhysicalWidthDpi());
-            area = new SimpleFloatProperty((width.floatValue() * height.floatValue())/10000);
+            area = new SimpleFloatProperty((width.floatValue() * height.floatValue()) / 10000);
             totalArea = new SimpleFloatProperty(area.floatValue() * quantity.intValue());
         } catch(ImageReadException | IOException e) {
             log.error("Image reading exception" + e);

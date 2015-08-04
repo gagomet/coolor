@@ -25,10 +25,10 @@ public class FolderReader {
     private static String JPEG_EXT = ".jpeg";
 
 
-    public List<ImageModel> getListOfImageModels(String pathToFolder){
+    public List<ImageModel> getListOfImageModels(String pathToFolder, boolean checkbox){
         List<ImageModel> results = new ArrayList<>();
         for(File file : readImagesFilesInFolder(pathToFolder)){
-            results.add(new ImageModel(file));
+            results.add(new ImageModel(file, checkbox));
         }
         return results;
     }
