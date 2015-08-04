@@ -1,9 +1,13 @@
 package coolor.fx;
 
+import coolor.ImageModel;
+import coolor.area.FolderReader;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -14,7 +18,6 @@ import java.net.URL;
 
 public class Starter extends Application {
     private Stage primaryStage;
-    private Pane rootLayout;
 
     public Starter(){
 //        Map<String, CMYK> preloaded = ParseXml.getOracalsMap(new File(Starter.class.getClassLoader().getResource("oracals.xml").getPath()));
@@ -28,7 +31,7 @@ public class Starter extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("AddressApp");
+        this.primaryStage.setTitle("Area counter application");
         initRootLayout();
     }
 
@@ -38,11 +41,14 @@ public class Starter extends Application {
     public void initRootLayout() {
         try {
             // Load root layout from fxml file.
+            URL location = getClass().getResource("/mainPane.fxml");
             FXMLLoader loader = new FXMLLoader();
-            File fxmlMain = new File("src/main/java/coolor/fx/mainPane.fxml");
-            loader.setLocation(fxmlMain.toURL());
-            rootLayout = (Pane)loader.load();
-            // Show the scene containing the root layout.
+            loader.setLocation(location);
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
+            Parent rootLayout = (Parent) loader.load(location.openStream());
+            MainPaneController mainPaneController = loader.getController();
+            mainPaneController.setStarter(this);
+            mainPaneController.initButtonsListeners();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();

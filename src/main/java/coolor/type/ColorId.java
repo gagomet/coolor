@@ -4,6 +4,7 @@ package coolor.type;
  * Created by KAKolesnikov on 2015-07-16.
  */
 public enum ColorId {
+    GRAYSCALE("Grayscale"),
     CMYK("CMYK"),
     RGB("RGB"),
     HEX("HEX");
