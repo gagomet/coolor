@@ -1,14 +1,6 @@
 package coolor;
 
-import coolor.type.ColorId;
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
@@ -34,6 +26,9 @@ public class ImageModel {
     private FloatProperty totalArea;
     private IntegerProperty densityWidth;
     private IntegerProperty densityHeight;
+
+    public ImageModel(){
+    }
 
     public ImageModel(File file, boolean checkbox) {
         try {
@@ -62,6 +57,8 @@ public class ImageModel {
             for (char ch : filename.toCharArray()) {
                 if (Character.isDigit(ch)) {
                     builder.append(ch);
+                } else {
+                    break;
                 }
             }
             return Integer.parseInt(builder.toString());

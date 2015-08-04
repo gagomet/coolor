@@ -6,13 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import org.apache.commons.imaging.ImageInfo;
 
@@ -36,6 +31,8 @@ public class MainPaneController {
     @FXML
     private CheckBox handleQuantity;
     @FXML
+    private Label totalArea;
+    @FXML
     private TableView<ImageModel> imagesTableView;
     @FXML
     private TableColumn<ImageModel, String> fileName;
@@ -49,6 +46,8 @@ public class MainPaneController {
     private TableColumn<ImageModel, Number> area;
     @FXML
     private TableColumn<ImageModel, ImageInfo.ColorType> colorSpace;
+
+    List<ImageModel> imageModelList;
 
     public MainPaneController() {
     }
@@ -91,8 +90,16 @@ public class MainPaneController {
     private void scanFolder(){
         FolderReader folderReader = new FolderReader();
         ObservableList<ImageModel> imageModels = FXCollections.observableArrayList();
-        List<ImageModel> imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected());
+         imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected());
         imageModels.addAll(imageModelList);
         imagesTableView.setItems(imageModels);
+        totalArea.setText(calculateTotalArea());
+    }
+    private String calculateTotalArea(){
+        Float totalArea = 0f;
+        for(ImageModel imageModel: imageModelList){
+            totalArea += imageModel.getTotalArea();
+        }
+        return totalArea.toString();
     }
 }

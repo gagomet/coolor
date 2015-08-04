@@ -27,4 +27,13 @@
         </columns>
       </TableView>
    </center>
+   <bottom>
+      <Pane prefHeight="53.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="14.0" layoutY="18.0" prefHeight="17.0" prefWidth="118.0" text="Total area in folder:" />
+            <Label fx:id="totalArea" layoutX="131.0" layoutY="18.0" prefHeight="17.0" prefWidth="84.0" text="0" />
+            <Button fx:id="exportToExcel" layoutX="492.0" layoutY="13.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Export to Excel" />
+         </children>
+      </Pane>
+   </bottom>
 </BorderPane>
