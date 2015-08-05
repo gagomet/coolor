@@ -22,7 +22,7 @@ public class XlsFilesManager implements XlsCRUD {
     private static final String EMPTY_STRING = "";
     private static final String XLS_EXTENSION = "xls";
     public static final String DEFAULT_NAME = "ImagesList";
-    private static final Object[] COLUMN_NAMES = {"File Name", "Width", "Height", "Color space", "Quantity", "Position area"};
+    private static final Object[] COLUMN_NAMES = {"Path to file", "File Name", "Width", "Height", "Color space", "Quantity", "Position area"};
 
     @Override
     public File createXlsFile(String absolutePath, List<ImageModel> dataToFile) {
@@ -32,7 +32,7 @@ public class XlsFilesManager implements XlsCRUD {
         fillXlsSheetWithStringData(dataMap, sheet, 0);
         File outputFile = new File(absolutePath + "." + XLS_EXTENSION);
         if (outputFile.exists()) {
-            System.out.println("File already exist!!!");
+            log.warn("File already exist!!!");
             return null;
         }
         writeWorkbookToFile(outputFile, workbook);
@@ -78,6 +78,7 @@ public class XlsFilesManager implements XlsCRUD {
             for (int i = 0; i < dataList.size(); i++) {
                 ImageModel tempImageModel = dataList.get(i);
                 List<Object> objectList = new LinkedList<Object>();
+                objectList.add(tempImageModel.getPathToFile());
                 objectList.add(tempImageModel.getName());
                 objectList.add(tempImageModel.getWidth());
                 objectList.add(tempImageModel.getHeight());
@@ -124,12 +125,13 @@ public class XlsFilesManager implements XlsCRUD {
                 HSSFRow tempRow = sheet.getRow(i);
                 Object[] data = parseRow(tempRow);
                 ImageModel tempImageModel = new ImageModel();
-                tempImageModel.setName((String) data[0]);
-                tempImageModel.setWidth((Float) data[1]);
-                tempImageModel.setHeight((Float) data[2]);
-                tempImageModel.setQuantity((Integer) data[3]);
-                tempImageModel.setColorspace(data[4]);
-                tempImageModel.setArea((Float) data[4]);
+                tempImageModel.setPathToFile((String)data[0]);
+                tempImageModel.setName((String) data[1]);
+                tempImageModel.setWidth((Float) data[2]);
+                tempImageModel.setHeight((Float) data[3]);
+                tempImageModel.setQuantity((Integer) data[4]);
+                tempImageModel.setColorspace(data[5]);
+                tempImageModel.setArea((Float) data[6]);
                 results.add(tempImageModel);
             }
         } catch(IOException e) {

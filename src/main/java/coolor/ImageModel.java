@@ -1,10 +1,12 @@
 package coolor;
 
+import coolor.dto.CurrencyDTO;
 import javafx.beans.property.*;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.log4j.Logger;
+import org.omg.CORBA.IMP_LIMIT;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class ImageModel {
     public static final Logger log = Logger.getLogger(ImageModel.class);
     private static float INCH_CM_COEF = 2.54f;
 
+    private StringProperty pathToFile;
     private StringProperty name;
     private IntegerProperty quantity;
     private ObjectProperty colorspace;
@@ -26,12 +29,14 @@ public class ImageModel {
     private FloatProperty totalArea;
     private IntegerProperty densityWidth;
     private IntegerProperty densityHeight;
+    private FloatProperty cost;
 
-    public ImageModel(){
+    public ImageModel() {
     }
 
     public ImageModel(File file, boolean checkbox) {
         try {
+            pathToFile = new SimpleStringProperty(file.getAbsolutePath());
             name = new SimpleStringProperty(file.getName());
             ImageInfo imageInfo = Imaging.getImageInfo(file);
             if (checkbox) {
@@ -46,9 +51,15 @@ public class ImageModel {
             densityHeight = new SimpleIntegerProperty(imageInfo.getPhysicalWidthDpi());
             area = new SimpleFloatProperty((width.floatValue() * height.floatValue()) / 10000);
             totalArea = new SimpleFloatProperty(area.floatValue() * quantity.intValue());
+            cost = new SimpleFloatProperty(0f);
         } catch(ImageReadException | IOException e) {
             log.error("Image reading exception" + e);
         }
+    }
+
+    public ImageModel(File file, boolean checkbox, CurrencyDTO currencyDTO) {
+        this(file, checkbox);
+        cost = new SimpleFloatProperty(totalArea.floatValue() * currencyDTO.getCost() * currencyDTO.getCurrency());
     }
 
     private int getFileQuantity(String filename) {
@@ -174,9 +185,34 @@ public class ImageModel {
         this.densityHeight.set(densityHeight);
     }
 
+    public float getCost() {
+        return cost.get();
+    }
+
+    public FloatProperty costProperty() {
+        return cost;
+    }
+
+    public void setCost(float cost) {
+        this.cost.set(cost);
+    }
+
+    public String getPathToFile() {
+        return pathToFile.get();
+    }
+
+    public StringProperty pathToFileProperty() {
+        return pathToFile;
+    }
+
+    public void setPathToFile(String pathToFile) {
+        this.pathToFile.set(pathToFile);
+    }
+
     @Override
     public String toString() {
         return new org.apache.commons.lang3.builder.ToStringBuilder(this)
+                .append("path", pathToFile)
                 .append("name", name)
                 .append("quantity", quantity)
                 .append("colorspace", colorspace)

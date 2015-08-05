@@ -1,6 +1,7 @@
 package coolor.area;
 
 import coolor.ImageModel;
+import coolor.dto.CurrencyDTO;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -25,10 +26,18 @@ public class FolderReader {
     private static String JPEG_EXT = ".jpeg";
 
 
-    public List<ImageModel> getListOfImageModels(String pathToFolder, boolean checkbox){
+    public List<ImageModel> getListOfImageModels(String pathToFolder, boolean handleQuantity) {
         List<ImageModel> results = new ArrayList<>();
-        for(File file : readImagesFilesInFolder(pathToFolder)){
-            results.add(new ImageModel(file, checkbox));
+        for (File file : readImagesFilesInFolder(pathToFolder)) {
+            results.add(new ImageModel(file, handleQuantity));
+        }
+        return results;
+    }
+
+    public List<ImageModel> getListOfImageModels(String pathToFolder, boolean handleQuantity, CurrencyDTO currencyDTO) {
+        List<ImageModel> results = new ArrayList<>();
+        for (File file : readImagesFilesInFolder(pathToFolder)) {
+            results.add(new ImageModel(file, handleQuantity, currencyDTO));
         }
         return results;
     }
@@ -38,7 +47,10 @@ public class FolderReader {
         try {
             Files.walk(Paths.get(pathToFolder)).forEach(filePath -> {
                 if (Files.isRegularFile(filePath) && (filePath.toString().endsWith(TIF_EXT) ||
-                        filePath.toString().endsWith(TIFF_EXT) || filePath.toString().endsWith(JPG_EXT) || filePath.toString().endsWith(JPEG_EXT))) {
+                        filePath.toString().endsWith(TIFF_EXT) || filePath.toString()
+                                                                          .endsWith(JPG_EXT) || filePath.toString()
+                                                                                                        .endsWith(
+                                                                                                                JPEG_EXT))) {
                     log.info(filePath.getFileName().toFile().getName() + " was added to results");
                     results.add(filePath.toFile());
                 }
@@ -47,5 +59,10 @@ public class FolderReader {
             log.error("IO exception" + e);
         }
         return results;
+    }
+
+    private List<File> getFilesFromFolder(String pathToFolder, List<File> files) {
+
+        return files;
     }
 }
