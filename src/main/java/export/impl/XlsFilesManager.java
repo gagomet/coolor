@@ -21,8 +21,8 @@ public class XlsFilesManager implements XlsCRUD {
     private static final Logger log = Logger.getLogger(XlsFilesManager.class);
     private static final String EMPTY_STRING = "";
     private static final String XLS_EXTENSION = "xls";
-    private static final String DEFAULT_NAME = "ImagesList";
-    private static final Object[] COLUMN_NAMES = {"File Name", "Width", "Height", "Color space", "Quantity", "Area"};
+    public static final String DEFAULT_NAME = "ImagesList";
+    private static final Object[] COLUMN_NAMES = {"File Name", "Width", "Height", "Color space", "Quantity", "Position area"};
 
     @Override
     public File createXlsFile(String absolutePath, List<ImageModel> dataToFile) {
@@ -100,7 +100,7 @@ public class XlsFilesManager implements XlsCRUD {
             int cellNum = 0;
             for (Object tempObject : rowData) {
                 Cell cell = row.createCell(cellNum++);
-                cell.setCellValue((String) tempObject);
+                cell.setCellValue(tempObject.toString());
             }
         }
     }

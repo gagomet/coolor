@@ -2,6 +2,8 @@ package coolor.fx;
 
 import coolor.ImageModel;
 import coolor.area.FolderReader;
+import export.XlsCRUD;
+import export.impl.XlsFilesManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import org.apache.commons.imaging.ImageInfo;
 
 import java.io.File;
@@ -28,6 +31,8 @@ public class MainPaneController {
     private Button scanFolderButton;
     @FXML
     private Button chooseDirectoryButton;
+    @FXML
+    private Button exportToExcel;
     @FXML
     private CheckBox handleQuantity;
     @FXML
@@ -60,6 +65,7 @@ public class MainPaneController {
         height.setCellValueFactory(cellData -> cellData.getValue().heightProperty());
         area.setCellValueFactory(cellData -> cellData.getValue().areaProperty());
         colorSpace.setCellValueFactory(cellData -> cellData.getValue().colorspaceProperty());
+        exportToExcel.setDisable(true);
     }
 
     public void setStarter(Starter starter) {
@@ -72,6 +78,7 @@ public class MainPaneController {
             @Override
             public void handle(ActionEvent event) {
                 scanFolder();
+                exportToExcel.setDisable(false);
             }
         });
         chooseDirectoryButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
@@ -85,12 +92,24 @@ public class MainPaneController {
                 pathToFolder.setText(selectedDirectory.getAbsolutePath());
             }
         });
+        exportToExcel.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                XlsCRUD xlsManager = new XlsFilesManager();
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Choose file to save");
+                fileChooser.setInitialFileName(XlsFilesManager.DEFAULT_NAME);
+                fileChooser.setInitialDirectory(new File("c:/"));
+                File selectedFile = fileChooser.showSaveDialog(starter.getPrimaryStage());
+                xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
+            }
+        });
     }
 
     private void scanFolder(){
         FolderReader folderReader = new FolderReader();
         ObservableList<ImageModel> imageModels = FXCollections.observableArrayList();
-         imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected());
+        imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected());
         imageModels.addAll(imageModelList);
         imagesTableView.setItems(imageModels);
         totalArea.setText(calculateTotalArea());
