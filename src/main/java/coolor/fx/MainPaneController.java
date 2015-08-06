@@ -152,6 +152,9 @@ public class MainPaneController extends AbstractController {
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(event -> {
             starter.getProxyPopup();
         });
+        menuBar.getMenus().get(1).getItems().get(0).setOnAction(event -> {
+
+        });
     }
 
     protected void initCheckboxes() {
