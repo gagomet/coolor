@@ -16,11 +16,12 @@
             <Pane fx:id="currencyPane" layoutX="23.0" layoutY="98.0" prefHeight="48.0" prefWidth="759.0">
                <children>
                   <TextField fx:id="costSqMeter" layoutX="515.0" layoutY="8.0" prefHeight="28.0" prefWidth="77.0" />
-                  <Label fx:id="usdCurrency" layoutX="176.0" layoutY="7.0" text="USD" />
-                  <Label fx:id="euroCurrency" layoutX="176.0" layoutY="27.0" text="EURO" />
+                  <Label fx:id="usdCurrency" layoutX="266.0" layoutY="7.0" text="UAH" />
+                  <Label fx:id="euroCurrency" layoutX="266.0" layoutY="27.0" text="UAH" />
                   <Label layoutY="15.0" prefHeight="14.0" prefWidth="195.0" text="Today's currency from arb.net.ua" />
                   <Label layoutX="417.0" layoutY="15.0" prefHeight="14.0" prefWidth="96.0" text="Cost of sq. meter" />
-                  <ComboBox fx:id="currencies" layoutX="316.0" layoutY="9.0" prefHeight="28.0" prefWidth="86.0" />
+                  <RadioButton fx:id="radioUsd" layoutX="185.0" layoutY="7.0" mnemonicParsing="false" text="1 USD =" />
+                  <RadioButton fx:id="radioEuro" layoutX="185.0" layoutY="27.0" mnemonicParsing="false" text="1 EURO =" />
                </children>
             </Pane>
             <TextField fx:id="pathToFolder" layoutX="23.0" layoutY="37.0" prefHeight="28.0" prefWidth="529.0" />

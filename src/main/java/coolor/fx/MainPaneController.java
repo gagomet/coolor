@@ -23,10 +23,12 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -78,14 +80,16 @@ public class MainPaneController extends AbstractController {
     @FXML
     private TableColumn<ImageModel, Number> cost;
     @FXML
-    private ComboBox<String> currencies;
+    private RadioButton radioUsd;
+    @FXML
+    private RadioButton radioEuro;
     @FXML
     private MenuBar menuBar;
 
     private List<ImageModel> imageModelList;
     private CurrencyDTO currencyDTO;
-    private static final String USD = "USD";
-    private static final String EURO = "EURO";
+    CurrencyTranslator currencyTranslator;
+    private static final String UAH_SUFFIX = " UAH";
 
     public MainPaneController() {
     }
@@ -104,91 +108,77 @@ public class MainPaneController extends AbstractController {
         errorMessage.setVisible(false);
         cost.setVisible(false);
         currencyPane.setVisible(false);
-        currencies = new ComboBox<String>(FXCollections.observableArrayList("USD", "EUR"));
     }
 
 
     protected void initButtonsListeners() {
-        scanFolderButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (pathToFolder.getText().isEmpty()) {
-                    errorMessage.setText(bundle.getString("error.set.folder"));
-                    errorMessage.setVisible(true);
-                } else {
-                    scanFolder();
-                    exportToExcel.setDisable(false);
-                }
+        scanFolderButton.setOnAction(event -> {
+            if (pathToFolder.getText().isEmpty()) {
+                errorMessage.setText(bundle.getString("error.set.folder"));
+                errorMessage.setVisible(true);
+            } else {
+                scanFolder();
+                exportToExcel.setDisable(false);
             }
         });
-        chooseDirectoryButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(bundle.getString("folder.to.scan.dialog"));
-                File defaultDirectory = new File(bundle.getString("initial.folder"));
-                chooser.setInitialDirectory(defaultDirectory);
-                File selectedDirectory = chooser.showDialog(starter.getPrimaryStage());
+
+        chooseDirectoryButton.setOnAction(event -> {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle(bundle.getString("folder.to.scan.dialog"));
+            File defaultDirectory = new File(bundle.getString("initial.folder"));
+            chooser.setInitialDirectory(defaultDirectory);
+            File selectedDirectory = chooser.showDialog(starter.getPrimaryStage());
+            if (selectedDirectory == null) {
+                starter.getErrorPopup(bundle.getString("error.choose.folder"));
+            } else {
                 pathToFolder.setText(selectedDirectory.getAbsolutePath());
-                errorMessage.setVisible(false);
             }
+            //TODO add handling choice nothing
+            errorMessage.setVisible(false);
         });
-        exportToExcel.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                XlsCRUD xlsManager = new XlsFilesManager();
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("folder.to.save.dialog");
-                fileChooser.setInitialFileName(XlsFilesManager.DEFAULT_NAME);
-                fileChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
-                File selectedFile = fileChooser.showSaveDialog(starter.getPrimaryStage());
-                xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
-            }
+
+        exportToExcel.setOnAction(event -> {
+            XlsCRUD xlsManager = new XlsFilesManager();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("folder.to.save.dialog");
+            fileChooser.setInitialFileName(XlsFilesManager.DEFAULT_NAME);
+            fileChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
+            File selectedFile = fileChooser.showSaveDialog(starter.getPrimaryStage());
+            xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
         });
     }
 
     protected void initMenus() {
-        menuBar.getMenus().get(0).getItems().get(0).addEventHandler(ActionEvent.ACTION,
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        starter.getProxyPopup();
-                    }
-                });
+        menuBar.getMenus().get(0).getItems().get(0).setOnAction(event -> {
+            starter.getProxyPopup();
+        });
     }
 
     protected void initCheckboxes() {
-        calculateCost.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (calculateCost.isSelected()) {
-                    CurrencyTranslator currencyTranslator = new CurrencyTranslator(starter.getUserProxy());
+        calculateCost.setOnAction(event -> {
+            if (calculateCost.isSelected()) {
+                currencyTranslator = new CurrencyTranslator(starter.getUserProxy());
+                try {
                     currencyTranslator.translateCourses();
-                    usdCurrency.setText(currencyTranslator.getUsdCourse().toString());
-                    euroCurrency.setText(currencyTranslator.getEuroCourse().toString());
-                    currencyDTO = new CurrencyDTO();
-                    //TODO resolve different currencies
-                    cost.setVisible(true);
-                    currencyPane.setVisible(true);
+                } catch(IOException e) {
+                    log.error("IO exception!");
+                    starter.getErrorPopup(bundle.getString("error.connection"));
+                    calculateCost.setSelected(false);
                 }
+                usdCurrency.setText(currencyTranslator.getUsdCourse().toString() + UAH_SUFFIX);
+                euroCurrency.setText(currencyTranslator.getEuroCourse().toString() + UAH_SUFFIX);
+                currencyDTO = new CurrencyDTO();
+                cost.setVisible(true);
+                currencyPane.setVisible(true);
             }
         });
     }
 
-    protected void initComboBoxes() {
-//        currencies.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//            @Override
-//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                switch (currencies.getValue()) {
-//                    case USD:
-//                        currencyDTO.setCurrency(Float.parseFloat(usdCurrency.getText()));
-//                        break;
-//                    case EURO:
-//                        currencyDTO.setCurrency(Float.parseFloat(euroCurrency.getText()));
-//                        break;
-//                }
-//            }
-//        });
+    protected void initRadioButtons() {
+        ToggleGroup currenciesGroup = new ToggleGroup();
+        radioUsd.setToggleGroup(currenciesGroup);
+        radioEuro.setToggleGroup(currenciesGroup);
+        radioUsd.setSelected(true);
     }
 
     private void scanFolder() {
@@ -197,19 +187,29 @@ public class MainPaneController extends AbstractController {
         if (calculateCost.isSelected()) {
             if (!costSqMeter.getText().isEmpty()) {
                 errorMessage.setVisible(false);
+                if (radioUsd.isSelected()) {
+                    currencyDTO.setCurrency(currencyTranslator.getUsdCourse());
+                } else if (radioEuro.isSelected()) {
+                    currencyDTO.setCurrency(currencyTranslator.getEuroCourse());
+                }
                 currencyDTO.setCost(Float.parseFloat(costSqMeter.getText()));
                 imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected(),
                         currencyDTO);
+                imageModels.addAll(imageModelList);
+                imagesTableView.setItems(imageModels);
+                totalArea.setText(calculateTotalArea());
             } else {
                 errorMessage.setText(bundle.getString("error.set.price"));
                 errorMessage.setVisible(true);
             }
         } else {
             imageModelList = folderReader.getListOfImageModels(pathToFolder.getText(), handleQuantity.isSelected());
+            imageModels.addAll(imageModelList);
+            imagesTableView.setItems(imageModels);
+            totalArea.setText(calculateTotalArea());
+            errorMessage.setVisible(true);
+            errorMessage.setVisible(true);
         }
-        imageModels.addAll(imageModelList);
-        imagesTableView.setItems(imageModels);
-        totalArea.setText(calculateTotalArea());
     }
 
     private String calculateTotalArea() {

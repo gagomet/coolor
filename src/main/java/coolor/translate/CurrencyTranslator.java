@@ -31,12 +31,10 @@ public class CurrencyTranslator {
 
 
     public CurrencyTranslator() {
-        translateCourses();
     }
 
     public CurrencyTranslator(UserProxy userProxy) {
         this.userProxy = userProxy;
-        translateCourses();
     }
 
     public Float getEuroCourse() {
@@ -47,10 +45,9 @@ public class CurrencyTranslator {
         return usdCourse;
     }
 
-    public void translateCourses() {
+    public void translateCourses() throws IOException {
         Document companyPageDocument;
         List<String> coursesList = new ArrayList<>();
-        try {
             if (userProxy == null) {
                 companyPageDocument = Jsoup.connect(bundle.getString("site")).get();
             } else {
@@ -66,10 +63,6 @@ public class CurrencyTranslator {
                 }
             }
             parseTextFromSite(coursesList);
-        } catch(IOException e) {
-            e.printStackTrace();
-            //TODO catch proxy exception java.net.ConnectException
-        }
     }
 
     protected String getHtmlInString(String url, UserProxy userProxy) {

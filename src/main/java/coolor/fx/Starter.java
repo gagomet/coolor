@@ -19,6 +19,7 @@ public class Starter extends Application {
 
     private Stage primaryStage;
     private Stage popupStage;
+    private Stage errorStage;
     private UserProxy userProxy;
 
     public Starter() {
@@ -52,8 +53,8 @@ public class Starter extends Application {
             mainPaneController.setStarter(this);
             mainPaneController.initButtonsListeners();
             mainPaneController.initMenus();
+            mainPaneController.initRadioButtons();
             mainPaneController.initCheckboxes();
-            mainPaneController.initComboBoxes();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -74,6 +75,7 @@ public class Starter extends Application {
             proxySettingsController.setStarter(this);
             proxySettingsController.initButtonsListeners();
             popupStage = new Stage();
+            popupStage.setTitle(bundle.getString("proxy.settings.name"));
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(scene);
             popupStage.show();
@@ -82,8 +84,34 @@ public class Starter extends Application {
         }
     }
 
+    protected void getErrorPopup(String errorMessage) {
+        try {
+            URL location = getClass().getResource(bundle.getString("error.fxml"));
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(location);
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
+            Parent rootLayout = (Parent) loader.load(location.openStream());
+            Scene scene = new Scene(rootLayout);
+            ErrorPopupController errorPopupController = loader.getController();
+            errorPopupController.setStarter(this);
+            errorPopupController.setErrorMesage(errorMessage);
+            errorPopupController.initButtonsListeners();
+            errorStage = new Stage();
+            errorStage.setTitle(bundle.getString("error.name"));
+            errorStage.initModality(Modality.APPLICATION_MODAL);
+            errorStage.setScene(scene);
+            errorStage.show();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void closeProxySettings(){
         popupStage.close();
+    }
+
+    protected void closeErrorPopup(){
+        errorStage.close();
     }
 
     protected void initUserProxy(){

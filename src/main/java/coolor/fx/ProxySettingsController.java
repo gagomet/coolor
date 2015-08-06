@@ -32,20 +32,15 @@ public class ProxySettingsController extends AbstractController {
     }
 
     public void initButtonsListeners(){
-        submitButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                starter.initUserProxy();
-                starter.getUserProxy().setProxyHost(proxyHost.getText());
-                starter.getUserProxy().setProxyPort(Integer.parseInt(proxyPort.getText()));
-                starter.closeProxySettings();
-            }
+        submitButton.setOnAction(event -> {
+            starter.initUserProxy();
+            starter.getUserProxy().setProxyHost(proxyHost.getText());
+            starter.getUserProxy().setProxyPort(Integer.parseInt(proxyPort.getText()));
+            starter.closeProxySettings();
         });
-        cancelButton.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                starter.closeProxySettings();
-            }
+
+        cancelButton.setOnAction(event -> {
+            starter.closeProxySettings();
         });
     }
 }

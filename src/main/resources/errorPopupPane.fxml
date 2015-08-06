@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="234.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="coolor.fx.ErrorPopupController">
+   <children>
+      <Button fx:id="okButton" layoutX="170.0" layoutY="157.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="163.0" text="Button" />
+      <Label fx:id="errorMessageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="17.0" layoutY="32.0" prefHeight="100.0" prefWidth="471.0" text="message" textAlignment="CENTER" textFill="RED" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>
