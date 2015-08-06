@@ -3,13 +3,24 @@ package coolor;
 import coolor.dto.CurrencyDTO;
 import javafx.beans.property.*;
 import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImageParser;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.formats.jpeg.JpegImageParser;
 import org.apache.log4j.Logger;
 import org.omg.CORBA.IMP_LIMIT;
+import org.w3c.dom.NodeList;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Created by KAKolesnikov on 2015-08-03.
@@ -18,6 +29,7 @@ public class ImageModel {
 
     public static final Logger log = Logger.getLogger(ImageModel.class);
     private static float INCH_CM_COEF = 2.54f;
+    private static final StringProperty undefined = new SimpleStringProperty("n/a");
 
     private StringProperty pathToFile;
     private StringProperty name;
@@ -39,17 +51,22 @@ public class ImageModel {
             pathToFile = new SimpleStringProperty(file.getAbsolutePath());
             name = new SimpleStringProperty(file.getName());
             ImageInfo imageInfo = Imaging.getImageInfo(file);
+            Dimension dimension = Imaging.getImageSize(file);
             if (checkbox) {
                 quantity = new SimpleIntegerProperty(getFileQuantity(file.getName()));
             } else {
                 quantity = new SimpleIntegerProperty(1);
             }
             colorspace = new SimpleObjectProperty<ImageInfo.ColorType>(imageInfo.getColorType());
-            width = new SimpleFloatProperty(imageInfo.getPhysicalWidthInch() * INCH_CM_COEF);
-            height = new SimpleFloatProperty(imageInfo.getPhysicalHeightInch() * INCH_CM_COEF);
             densityWidth = new SimpleIntegerProperty(imageInfo.getPhysicalWidthDpi());
             densityHeight = new SimpleIntegerProperty(imageInfo.getPhysicalWidthDpi());
-            area = new SimpleFloatProperty((width.floatValue() * height.floatValue()) / 10000);
+            width = new SimpleFloatProperty(imageInfo.getPhysicalWidthInch() * INCH_CM_COEF);
+            height = new SimpleFloatProperty(imageInfo.getPhysicalHeightInch() * INCH_CM_COEF);
+            if (densityWidth.getValue() < 0 || densityHeight.getValue() < 0) {
+                area = new SimpleFloatProperty(0);
+            } else {
+                area = new SimpleFloatProperty((width.floatValue() * height.floatValue()) / 10000);
+            }
             totalArea = new SimpleFloatProperty(area.floatValue() * quantity.intValue());
             cost = new SimpleFloatProperty(0f);
         } catch(ImageReadException | IOException e) {
@@ -207,6 +224,18 @@ public class ImageModel {
 
     public void setPathToFile(String pathToFile) {
         this.pathToFile.set(pathToFile);
+    }
+
+    public static String getUndefined() {
+        return undefined.get();
+    }
+
+    public static StringProperty undefinedProperty() {
+        return undefined;
+    }
+
+    public static void setUndefined(String undefined) {
+        ImageModel.undefined.set(undefined);
     }
 
     @Override

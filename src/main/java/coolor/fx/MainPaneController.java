@@ -6,6 +6,8 @@ import coolor.dto.CurrencyDTO;
 import coolor.translate.CurrencyTranslator;
 import export.XlsCRUD;
 import export.impl.XlsFilesManager;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.log4j.Logger;
@@ -70,9 +73,9 @@ public class MainPaneController extends AbstractController {
     @FXML
     private TableColumn<ImageModel, Number> quantity;
     @FXML
-    private TableColumn<ImageModel, Number> width;
+    private TableColumn<ImageModel, String> width;
     @FXML
-    private TableColumn<ImageModel, Number> height;
+    private TableColumn<ImageModel, String> height;
     @FXML
     private TableColumn<ImageModel, Number> area;
     @FXML
@@ -86,9 +89,12 @@ public class MainPaneController extends AbstractController {
     @FXML
     private MenuBar menuBar;
 
+    private TableColumn deleteButtonColumn;
+
     private List<ImageModel> imageModelList;
     private CurrencyDTO currencyDTO;
-    CurrencyTranslator currencyTranslator;
+    private CurrencyTranslator currencyTranslator;
+    private ObservableList<ImageModel> imageModels;
     private static final String UAH_SUFFIX = " UAH";
 
     public MainPaneController() {
@@ -99,8 +105,17 @@ public class MainPaneController extends AbstractController {
         pathToFile.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         fileName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         quantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-        width.setCellValueFactory(cellData -> cellData.getValue().widthProperty());
-        height.setCellValueFactory(cellData -> cellData.getValue().heightProperty());
+        width.setCellValueFactory(cellData -> cellData.getValue().widthProperty().floatValue() > 0
+                                              ? cellData.getValue()
+                                                        .widthProperty()
+                                                        .asString()
+                                              : cellData.getValue().undefinedProperty());
+        height.setCellValueFactory(
+                cellData -> cellData.getValue().heightProperty().floatValue() > 0
+                            ? cellData.getValue()
+                                      .heightProperty()
+                                      .asString()
+                            : cellData.getValue().undefinedProperty());
         area.setCellValueFactory(cellData -> cellData.getValue().areaProperty());
         colorSpace.setCellValueFactory(cellData -> cellData.getValue().colorspaceProperty());
         cost.setCellValueFactory(cellData -> cellData.getValue().costProperty());
@@ -108,8 +123,14 @@ public class MainPaneController extends AbstractController {
         errorMessage.setVisible(false);
         cost.setVisible(false);
         currencyPane.setVisible(false);
+        deleteButtonColumn = new TableColumn("Delete entry");
+        deleteButtonColumn.setSortable(false);
     }
 
+    protected void initDeleteButtons() {
+        imagesTableView.getColumns().add(deleteButtonColumn);
+        deleteButtonColumn.setCellFactory(p -> new ButtonCell(imagesTableView));
+    }
 
     protected void initButtonsListeners() {
         scanFolderButton.setOnAction(event -> {
@@ -186,7 +207,7 @@ public class MainPaneController extends AbstractController {
 
     private void scanFolder() {
         FolderReader folderReader = new FolderReader();
-        ObservableList<ImageModel> imageModels = FXCollections.observableArrayList();
+        imageModels = FXCollections.observableArrayList();
         if (calculateCost.isSelected()) {
             if (!costSqMeter.getText().isEmpty()) {
                 errorMessage.setVisible(false);
@@ -210,8 +231,7 @@ public class MainPaneController extends AbstractController {
             imageModels.addAll(imageModelList);
             imagesTableView.setItems(imageModels);
             totalArea.setText(calculateTotalArea());
-            errorMessage.setVisible(true);
-            errorMessage.setVisible(true);
+            errorMessage.setVisible(false);
         }
     }
 
@@ -221,5 +241,31 @@ public class MainPaneController extends AbstractController {
             totalArea += imageModel.getTotalArea();
         }
         return totalArea.toString();
+    }
+
+    private class ButtonCell extends TableCell<ImageModel, Boolean> {
+
+        final Button cellButton = new Button("Delete");
+
+        ButtonCell(final TableView tblView) {
+
+            cellButton.setOnAction(t -> {
+                int selectdIndex = getTableRow().getIndex();
+                //delete the selected item in data
+                imagesTableView.getItems().remove(selectdIndex);
+                imageModelList.remove(selectdIndex);
+                totalArea.setText(calculateTotalArea());
+                errorMessage.setVisible(false);
+            });
+        }
+
+        //Display button if the row is not empty
+        @Override
+        protected void updateItem(Boolean t, boolean empty) {
+            super.updateItem(t, empty);
+            if (!empty) {
+                setGraphic(cellButton);
+            }
+        }
     }
 }

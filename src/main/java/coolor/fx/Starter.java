@@ -55,6 +55,7 @@ public class Starter extends Application {
             mainPaneController.initMenus();
             mainPaneController.initRadioButtons();
             mainPaneController.initCheckboxes();
+            mainPaneController.initDeleteButtons();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
