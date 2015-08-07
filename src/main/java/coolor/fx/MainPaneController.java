@@ -2,7 +2,9 @@ package coolor.fx;
 
 import coolor.ImageModel;
 import coolor.area.FolderReader;
+import coolor.colorspaces.CMYK;
 import coolor.dto.CurrencyDTO;
+import coolor.parcer.ParseXml;
 import coolor.translate.CurrencyTranslator;
 import export.XlsCRUD;
 import export.impl.XlsFilesManager;
@@ -32,7 +34,10 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -88,6 +93,10 @@ public class MainPaneController extends AbstractController {
     private RadioButton radioEuro;
     @FXML
     private MenuBar menuBar;
+
+
+    @FXML
+    private ChoiceBox<SpotColor> spotColorsChoiceBox;
 
     private TableColumn deleteButtonColumn;
 
@@ -205,6 +214,26 @@ public class MainPaneController extends AbstractController {
         radioUsd.setSelected(true);
     }
 
+    protected void initChoiceBoxes(){
+        ObservableList<SpotColor> spotColorsObservableList = FXCollections.observableArrayList();
+        ParseXml parseXml = new ParseXml();
+        Map<String, CMYK> oracalsMap = parseXml.getOracalsMap(new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
+        List<SpotColor> spotColorList = new ArrayList<>();
+        Iterator iterator = oracalsMap.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String, CMYK> pair = (Map.Entry<String, CMYK>)iterator.next();
+            SpotColor temporaryColor = new SpotColor(pair.getKey(), pair.getValue());
+            spotColorList.add(temporaryColor);
+        }
+        spotColorsObservableList.addAll(spotColorList);
+        spotColorsChoiceBox.setConverter(new SpotColorConverter());
+        spotColorsChoiceBox.setItems(spotColorsObservableList);
+        spotColorsChoiceBox.getSelectionModel().selectedIndexProperty()
+          .addListener((ov, value, new_value) -> {
+              System.out.println("hui");
+          });
+    }
+
     private void scanFolder() {
         FolderReader folderReader = new FolderReader();
         imageModels = FXCollections.observableArrayList();
@@ -266,6 +295,19 @@ public class MainPaneController extends AbstractController {
             if (!empty) {
                 setGraphic(cellButton);
             }
+        }
+    }
+
+    private class SpotColorConverter extends StringConverter<SpotColor> {
+
+        @Override
+        public String toString(SpotColor object) {
+            return object.toString();
+        }
+
+        @Override
+        public SpotColor fromString(String string) {
+            return null;
         }
     }
 }

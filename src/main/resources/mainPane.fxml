@@ -4,18 +4,16 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <TabPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="coolor.fx.MainPaneController">
    <tabs>
-      <Tab  text="Area Calculator">
+      <Tab text="Area Calculator">
          <content>
             <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="601.0" prefWidth="795.0">
                <top>
                   <Pane prefHeight="145.0" prefWidth="795.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="scanFolderButton" layoutX="574.0" layoutY="37.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Check files" />
                         <CheckBox fx:id="handleQuantity" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" text="Handle images quantity via file name" />
-                        <Button fx:id="chooseDirectoryButton" layoutX="681.0" layoutY="37.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Choose folder" />
+                        <Button fx:id="chooseDirectoryButton" layoutX="566.0" layoutY="37.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Choose folder" />
                         <Label fx:id="errorMessage" layoutX="573.0" layoutY="77.0" prefHeight="20.0" prefWidth="207.0" text="error!" textFill="#f50303" />
                         <CheckBox fx:id="calculateCost" layoutX="247.0" layoutY="75.0" mnemonicParsing="false" text="I want to calculate cost of printing" />
                         <Pane fx:id="currencyPane" layoutX="23.0" layoutY="98.0" prefHeight="48.0" prefWidth="759.0">
@@ -44,6 +42,7 @@
                             </Menu>
                           </menus>
                         </MenuBar>
+                        <Button fx:id="scanFolderButton" layoutX="679.0" layoutY="37.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Check files" />
                      </children>
                   </Pane>
                </top>
@@ -75,7 +74,10 @@
       </Tab>
       <Tab text="Spot Colors Mapper">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="33.0" layoutY="60.0" prefHeight="25.0" prefWidth="215.0" />
+               </children></AnchorPane>
         </content>
       </Tab>
    </tabs>
