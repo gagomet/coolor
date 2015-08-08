@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -77,6 +78,15 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="33.0" layoutY="60.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Pane fx:id="colorsPane" layoutX="281.0" layoutY="60.0" prefHeight="517.0" prefWidth="484.0">
+                     <children>
+                        <Rectangle fx:id="spotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" width="200.0" />
+                        <Rectangle fx:id="roundedSpotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="277.0" width="200.0" />
+                        <Label fx:id="labelCmyk" layoutY="139.0" prefHeight="40.0" prefWidth="170.0" text="Spot color CMYK is: " />
+                        <Label fx:id="labelRgb" layoutY="179.0" prefHeight="40.0" prefWidth="170.0" text="Spot color RGB is: " />
+                        <Label fx:id="labelHex" layoutY="219.0" prefHeight="40.0" prefWidth="170.0" text="Spot color HEX is: " />
+                     </children>
+                  </Pane>
                </children></AnchorPane>
         </content>
       </Tab>

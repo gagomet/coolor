@@ -60,7 +60,7 @@ public class SpotColor {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Oracal®™ ");
+        builder.append("Oracal  ");
         builder.append(this.getName());
         return builder.toString();
     }

@@ -2,46 +2,48 @@ package coolor.colorspaces;
 
 import coolor.type.ColorId;
 
+import java.util.Objects;
+
 /**
  * Created by Padonag on 24.09.2014.
  */
 public class RGB implements Colorspace{
 
-    private int red;
-    private int green;
-    private int blue;
+    private double red;
+    private double green;
+    private double blue;
 
     public RGB() {
 
     }
 
-    public RGB(int red, int green, int blue) {
+    public RGB(double red, double green, double blue) {
         this.red = red;
         this.green = green;
         this.blue = blue;
     }
 
-    public int getRed() {
+    public double getRed() {
         return red;
     }
 
-    public void setRed(int red) {
+    public void setRed(double red) {
         this.red = red;
     }
 
-    public int getGreen() {
+    public double getGreen() {
         return green;
     }
 
-    public void setGreen(int green) {
+    public void setGreen(double green) {
         this.green = green;
     }
 
-    public int getBlue() {
+    public double getBlue() {
         return blue;
     }
 
-    public void setBlue(int blue) {
+    public void setBlue(double blue) {
         this.blue = blue;
     }
 
@@ -52,24 +54,17 @@ public class RGB implements Colorspace{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RGB)) return false;
-
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         RGB rgb = (RGB) o;
-
-        if (blue != rgb.blue) return false;
-        if (green != rgb.green) return false;
-        if (red != rgb.red) return false;
-
-        return true;
+        return Double.compare(rgb.red, red) == 0 &&
+                Double.compare(rgb.green, green) == 0 &&
+                Double.compare(rgb.blue, blue) == 0;
     }
 
     @Override
     public int hashCode() {
-        int result = red;
-        result = 31 * result + green;
-        result = 31 * result + blue;
-        return result;
+        return Objects.hash(red, green, blue);
     }
 
     public ColorId spaceName() {

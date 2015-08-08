@@ -55,9 +55,9 @@ public class ColorConverter {
     }
 
     public Hex rgbToHex(RGB rgb) {
-        String hexR = checkToSingleNumber(Integer.toHexString(rgb.getRed()));
-        String hexG = checkToSingleNumber(Integer.toHexString(rgb.getGreen()));
-        String hexB = checkToSingleNumber(Integer.toHexString(rgb.getBlue()));
+        String hexR = checkToSingleNumber(Double.toHexString(rgb.getRed()));
+        String hexG = checkToSingleNumber(Double.toHexString(rgb.getGreen()));
+        String hexB = checkToSingleNumber(Double.toHexString(rgb.getBlue()));
         Hex hex = new Hex();
         hex.setHexRed(hexR);
         hex.setHexGreen(hexG);

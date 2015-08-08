@@ -3,34 +3,25 @@ package coolor.fx;
 import coolor.ImageModel;
 import coolor.area.FolderReader;
 import coolor.colorspaces.CMYK;
+import coolor.converter.ColorConverter;
 import coolor.dto.CurrencyDTO;
 import coolor.parcer.ParseXml;
 import coolor.translate.CurrencyTranslator;
 import export.XlsCRUD;
 import export.impl.XlsFilesManager;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.commons.imaging.ImageInfo;
-import org.apache.log4j.Logger;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -94,9 +85,15 @@ public class MainPaneController extends AbstractController {
     @FXML
     private MenuBar menuBar;
 
-
+//    Color mapper tab
     @FXML
     private ChoiceBox<SpotColor> spotColorsChoiceBox;
+    @FXML
+    private Rectangle spotColorRectangle;
+    @FXML
+    private Rectangle roundedSpotColorRectangle;
+    @FXML
+    private Pane colorsPane;
 
     private TableColumn deleteButtonColumn;
 
@@ -215,6 +212,8 @@ public class MainPaneController extends AbstractController {
     }
 
     protected void initChoiceBoxes(){
+        spotColorRectangle.setVisible(false);
+        roundedSpotColorRectangle.setVisible(false);
         ObservableList<SpotColor> spotColorsObservableList = FXCollections.observableArrayList();
         ParseXml parseXml = new ParseXml();
         Map<String, CMYK> oracalsMap = parseXml.getOracalsMap(new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
@@ -223,6 +222,8 @@ public class MainPaneController extends AbstractController {
         while(iterator.hasNext()){
             Map.Entry<String, CMYK> pair = (Map.Entry<String, CMYK>)iterator.next();
             SpotColor temporaryColor = new SpotColor(pair.getKey(), pair.getValue());
+            temporaryColor.setRgb(ColorConverter.getInstance().cmykToRgb(pair.getValue()));
+            temporaryColor.setHex(ColorConverter.getInstance().cmykToHex(pair.getValue()));
             spotColorList.add(temporaryColor);
         }
         spotColorsObservableList.addAll(spotColorList);
@@ -230,7 +231,12 @@ public class MainPaneController extends AbstractController {
         spotColorsChoiceBox.setItems(spotColorsObservableList);
         spotColorsChoiceBox.getSelectionModel().selectedIndexProperty()
           .addListener((ov, value, new_value) -> {
-              System.out.println("hui");
+              //TODO implement logic of choicebox
+              SpotColor spotColor = spotColorList.get(new_value.intValue());
+              spotColorRectangle.setFill(Color.color(spotColor.getRgb().getRed()/255, spotColor.getRgb().getGreen()/255, spotColor.getRgb().getBlue()/255));
+              spotColorRectangle.setVisible(true);
+              roundedSpotColorRectangle.setVisible(true);
+              System.out.println(spotColor.getCmyk().toString());
           });
     }
 
