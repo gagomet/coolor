@@ -22,6 +22,15 @@ public class CMYK implements Colorspace {
         this.black = black;
     }
 
+    public CMYK getRoundedCmyk(){
+        CMYK roundedCmyk = new CMYK();
+        roundedCmyk.setCyan(getRoundedChannel(5L, cyan));
+        roundedCmyk.setMagenta(getRoundedChannel(5L, magenta));
+        roundedCmyk.setYellow(getRoundedChannel(5L, yellow));
+        roundedCmyk.setBlack(getRoundedChannel(5L, black));
+        return roundedCmyk;
+    }
+
     public double getCyan() {
         return cyan;
     }
@@ -56,7 +65,19 @@ public class CMYK implements Colorspace {
 
     @Override
     public String toString() {
-        return "CMYK color:       " + cyan + "       " + magenta + "        " + yellow + "        " + black;
+        StringBuilder builder = new StringBuilder();
+        builder.append("C:");
+        builder.append(cyan);
+        builder.append("  ");
+        builder.append("M:");
+        builder.append(magenta);
+        builder.append("  ");
+        builder.append("Y:");
+        builder.append(yellow);
+        builder.append("  ");
+        builder.append("K:");
+        builder.append(black);
+        return builder.toString();
     }
 
     @Override
@@ -91,5 +112,9 @@ public class CMYK implements Colorspace {
 
     public ColorId spaceName() {
         return ColorId.CMYK;
+    }
+
+    private Long getRoundedChannel(Long roundTo, double channelValue){
+        return roundTo*(Math.round(channelValue)/roundTo);
     }
 }

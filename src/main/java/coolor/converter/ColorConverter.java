@@ -5,6 +5,8 @@ import coolor.colorspaces.CMYK;
 import coolor.colorspaces.Hex;
 import coolor.colorspaces.RGB;
 
+import java.awt.Color;
+
 /**
  * Created by Padonag on 24.09.2014.
  */
@@ -63,6 +65,11 @@ public class ColorConverter {
         hex.setHexGreen(hexG);
         hex.setHexBlue(hexB);
         return hex;
+    }
+
+    public String rgbToHexString(RGB rgb){
+        Color color = new Color(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
+        return "Hex color is: #"+Integer.toHexString(color.getRGB()).substring(2);
     }
 
     public RGB hexToRgb(Hex hex) {

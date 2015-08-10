@@ -14,7 +14,7 @@ public class SpotColor {
     private String name;
     private CMYK cmyk;
     private RGB rgb;
-    private Hex hex;
+    private String hex;
 
     public SpotColor(String name) {
         this.name = name;
@@ -49,11 +49,11 @@ public class SpotColor {
         this.rgb = rgb;
     }
 
-    public Hex getHex() {
+    public String getHex() {
         return hex;
     }
 
-    public void setHex(Hex hex) {
+    public void setHex(String hex) {
         this.hex = hex;
     }
 

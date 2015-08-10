@@ -3,6 +3,7 @@ package coolor.fx;
 import coolor.ImageModel;
 import coolor.area.FolderReader;
 import coolor.colorspaces.CMYK;
+import coolor.colorspaces.RGB;
 import coolor.converter.ColorConverter;
 import coolor.dto.CurrencyDTO;
 import coolor.parcer.ParseXml;
@@ -14,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.InputMethodRequests;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -85,15 +87,25 @@ public class MainPaneController extends AbstractController {
     @FXML
     private MenuBar menuBar;
 
-//    Color mapper tab
+    //    Color mapper tab
     @FXML
     private ChoiceBox<SpotColor> spotColorsChoiceBox;
+    @FXML
+    private Pane colorsPane;
     @FXML
     private Rectangle spotColorRectangle;
     @FXML
     private Rectangle roundedSpotColorRectangle;
     @FXML
-    private Pane colorsPane;
+    private Label labelCmyk;
+    @FXML
+    private Label labelRgb;
+    @FXML
+    private Label labelHex;
+    @FXML
+    private Label roundedCmykLabel;
+    @FXML
+    private ColorPicker colorPicker;
 
     private TableColumn deleteButtonColumn;
 
@@ -102,6 +114,7 @@ public class MainPaneController extends AbstractController {
     private CurrencyTranslator currencyTranslator;
     private ObservableList<ImageModel> imageModels;
     private static final String UAH_SUFFIX = " UAH";
+    private static final double RGB_BYTES = 255d;
 
     public MainPaneController() {
     }
@@ -131,6 +144,7 @@ public class MainPaneController extends AbstractController {
         currencyPane.setVisible(false);
         deleteButtonColumn = new TableColumn("Delete entry");
         deleteButtonColumn.setSortable(false);
+        colorsPane.setVisible(false);
     }
 
     protected void initDeleteButtons() {
@@ -211,33 +225,29 @@ public class MainPaneController extends AbstractController {
         radioUsd.setSelected(true);
     }
 
-    protected void initChoiceBoxes(){
-        spotColorRectangle.setVisible(false);
-        roundedSpotColorRectangle.setVisible(false);
+    protected void initChoiceBoxes() {
         ObservableList<SpotColor> spotColorsObservableList = FXCollections.observableArrayList();
         ParseXml parseXml = new ParseXml();
-        Map<String, CMYK> oracalsMap = parseXml.getOracalsMap(new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
+        Map<String, CMYK> oracalsMap = parseXml.getOracalsMap(
+                new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
         List<SpotColor> spotColorList = new ArrayList<>();
         Iterator iterator = oracalsMap.entrySet().iterator();
-        while(iterator.hasNext()){
-            Map.Entry<String, CMYK> pair = (Map.Entry<String, CMYK>)iterator.next();
+        while (iterator.hasNext()) {
+            Map.Entry<String, CMYK> pair = (Map.Entry<String, CMYK>) iterator.next();
             SpotColor temporaryColor = new SpotColor(pair.getKey(), pair.getValue());
             temporaryColor.setRgb(ColorConverter.getInstance().cmykToRgb(pair.getValue()));
-            temporaryColor.setHex(ColorConverter.getInstance().cmykToHex(pair.getValue()));
+            temporaryColor.setHex(ColorConverter.getInstance().rgbToHexString(temporaryColor.getRgb()));
             spotColorList.add(temporaryColor);
         }
         spotColorsObservableList.addAll(spotColorList);
         spotColorsChoiceBox.setConverter(new SpotColorConverter());
         spotColorsChoiceBox.setItems(spotColorsObservableList);
         spotColorsChoiceBox.getSelectionModel().selectedIndexProperty()
-          .addListener((ov, value, new_value) -> {
-              //TODO implement logic of choicebox
-              SpotColor spotColor = spotColorList.get(new_value.intValue());
-              spotColorRectangle.setFill(Color.color(spotColor.getRgb().getRed()/255, spotColor.getRgb().getGreen()/255, spotColor.getRgb().getBlue()/255));
-              spotColorRectangle.setVisible(true);
-              roundedSpotColorRectangle.setVisible(true);
-              System.out.println(spotColor.getCmyk().toString());
-          });
+                           .addListener((ov, value, new_value) -> {
+                               //TODO implement logic of choicebox
+                               SpotColor spotColor = spotColorList.get(new_value.intValue());
+                               handleSpotColorChanges(spotColor);
+                           });
     }
 
     private void scanFolder() {
@@ -276,6 +286,25 @@ public class MainPaneController extends AbstractController {
             totalArea += imageModel.getTotalArea();
         }
         return totalArea.toString();
+    }
+
+    private void handleSpotColorChanges(SpotColor spotColor) {
+        double doubleRed = spotColor.getRgb().getRed() / RGB_BYTES;
+        double doubleGreen = spotColor.getRgb().getGreen() / RGB_BYTES;
+        double doubleBlue = spotColor.getRgb().getBlue() / RGB_BYTES;
+        spotColorRectangle.setFill(Color.color(doubleRed, doubleGreen, doubleBlue));
+        colorsPane.setVisible(true);
+        labelCmyk.setText("CMYK: " + spotColor.getCmyk().toString());
+        labelRgb.setText("RGB: " + spotColor.getRgb().toString());
+        labelHex.setText(spotColor.getHex().toString());
+        RGB roundedRgb = ColorConverter.getInstance().cmykToRgb(spotColor.getCmyk().getRoundedCmyk());
+        Color roundedColor = Color.color(roundedRgb.getRed() / RGB_BYTES, roundedRgb.getGreen() / RGB_BYTES,
+                roundedRgb.getBlue() / RGB_BYTES);
+        roundedSpotColorRectangle.setFill(roundedColor);
+        roundedCmykLabel.setText("Rounded CMYK: " + spotColor.getCmyk().getRoundedCmyk().toString());
+        colorPicker.setValue(roundedColor);
+        log.info("rounded color: " + spotColor.getCmyk().getRoundedCmyk().toString());
+        log.info(spotColor.getCmyk().toString());
     }
 
     private class ButtonCell extends TableCell<ImageModel, Boolean> {

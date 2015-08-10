@@ -40,13 +40,9 @@ public class Hex implements Colorspace {
         this.hexBlue = hexBlue;
     }
 
-    public String getColorNumber() {
-        return "#" + hexRed + hexGreen + hexBlue;
-    }
-
     @Override
     public String toString() {
-        return "Hex color = #" + hexRed + hexGreen + hexBlue;
+        return "Hex color = #" + hexRed.substring(2) + hexGreen.substring(2) + hexBlue.substring(2);
     }
 
     @Override

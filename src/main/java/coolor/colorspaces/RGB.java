@@ -9,47 +9,56 @@ import java.util.Objects;
  */
 public class RGB implements Colorspace{
 
-    private double red;
-    private double green;
-    private double blue;
+    private int red;
+    private int green;
+    private int blue;
 
     public RGB() {
 
     }
 
-    public RGB(double red, double green, double blue) {
+    public RGB(int red, int green, int blue) {
         this.red = red;
         this.green = green;
         this.blue = blue;
     }
 
-    public double getRed() {
+    public int getRed() {
         return red;
     }
 
-    public void setRed(double red) {
+    public void setRed(int red) {
         this.red = red;
     }
 
-    public double getGreen() {
+    public int getGreen() {
         return green;
     }
 
-    public void setGreen(double green) {
+    public void setGreen(int green) {
         this.green = green;
     }
 
-    public double getBlue() {
+    public int getBlue() {
         return blue;
     }
 
-    public void setBlue(double blue) {
+    public void setBlue(int blue) {
         this.blue = blue;
     }
 
     @Override
     public String toString() {
-        return "RGB color = " + red + " " + green + " " + blue;
+        StringBuilder builder = new StringBuilder();
+        builder.append("R:");
+        builder.append(red);
+        builder.append("  ");
+        builder.append("G:");
+        builder.append(green);
+        builder.append("  ");
+        builder.append("B:");
+        builder.append(blue);
+        return builder.toString();
     }
 
     @Override
@@ -57,9 +66,9 @@ public class RGB implements Colorspace{
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
         RGB rgb = (RGB) o;
-        return Double.compare(rgb.red, red) == 0 &&
-                Double.compare(rgb.green, green) == 0 &&
-                Double.compare(rgb.blue, blue) == 0;
+        return red == rgb.red &&
+                green == rgb.green &&
+                blue == rgb.blue;
     }
 
     @Override

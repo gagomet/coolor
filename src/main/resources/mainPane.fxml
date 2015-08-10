@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -77,16 +78,23 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="33.0" layoutY="60.0" prefHeight="25.0" prefWidth="215.0" />
-                  <Pane fx:id="colorsPane" layoutX="281.0" layoutY="60.0" prefHeight="517.0" prefWidth="484.0">
+                  <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="32.0" layoutY="77.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Pane fx:id="colorsPane" layoutX="280.0" layoutY="77.0" prefHeight="517.0" prefWidth="484.0">
                      <children>
                         <Rectangle fx:id="spotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" width="200.0" />
-                        <Rectangle fx:id="roundedSpotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="277.0" width="200.0" />
-                        <Label fx:id="labelCmyk" layoutY="139.0" prefHeight="40.0" prefWidth="170.0" text="Spot color CMYK is: " />
-                        <Label fx:id="labelRgb" layoutY="179.0" prefHeight="40.0" prefWidth="170.0" text="Spot color RGB is: " />
-                        <Label fx:id="labelHex" layoutY="219.0" prefHeight="40.0" prefWidth="170.0" text="Spot color HEX is: " />
+                        <Rectangle fx:id="roundedSpotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="245.0" width="200.0" />
+                        <Label fx:id="labelCmyk" layoutY="139.0" prefHeight="40.0" prefWidth="280.0" text="Spot color CMYK is: " />
+                        <Label fx:id="labelRgb" layoutY="179.0" prefHeight="40.0" prefWidth="280.0" text="Spot color RGB is: " />
+                        <Label fx:id="labelHex" layoutY="219.0" prefHeight="40.0" prefWidth="280.0" text="Spot color HEX is: " />
+                        <Label fx:id="roundedCmykLabel" layoutX="245.0" layoutY="139.0" prefHeight="40.0" prefWidth="238.0" text="Rounded CMYK is: " />
+                        <ColorPicker fx:id="colorPicker" layoutX="245.0" layoutY="210.0" prefHeight="49.0" prefWidth="200.0" />
                      </children>
                   </Pane>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="99.0" layoutY="14.0" prefHeight="39.0" prefWidth="598.0" text="Pick the Oracal(tm) number from dropdown list">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
                </children></AnchorPane>
         </content>
       </Tab>
