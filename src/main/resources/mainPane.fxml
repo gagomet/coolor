@@ -78,23 +78,41 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="32.0" layoutY="77.0" prefHeight="25.0" prefWidth="215.0" />
-                  <Pane fx:id="colorsPane" layoutX="280.0" layoutY="77.0" prefHeight="517.0" prefWidth="484.0">
+                  <Pane fx:id="colorsPane" layoutX="297.0" layoutY="93.0" prefHeight="428.0" prefWidth="449.0">
                      <children>
-                        <Rectangle fx:id="spotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" width="200.0" />
-                        <Rectangle fx:id="roundedSpotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="245.0" width="200.0" />
-                        <Label fx:id="labelCmyk" layoutY="139.0" prefHeight="40.0" prefWidth="280.0" text="Spot color CMYK is: " />
-                        <Label fx:id="labelRgb" layoutY="179.0" prefHeight="40.0" prefWidth="280.0" text="Spot color RGB is: " />
-                        <Label fx:id="labelHex" layoutY="219.0" prefHeight="40.0" prefWidth="280.0" text="Spot color HEX is: " />
-                        <Label fx:id="roundedCmykLabel" layoutX="245.0" layoutY="139.0" prefHeight="40.0" prefWidth="238.0" text="Rounded CMYK is: " />
-                        <ColorPicker fx:id="colorPicker" layoutX="245.0" layoutY="210.0" prefHeight="49.0" prefWidth="200.0" />
+                        <Rectangle fx:id="spotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="1.0" layoutY="80.0" width="200.0" />
+                        <Rectangle fx:id="roundedSpotColorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="129.0" layoutX="246.0" layoutY="80.0" width="200.0" />
+                        <Label fx:id="labelCmyk" layoutX="1.0" layoutY="219.0" prefHeight="40.0" prefWidth="280.0" text="Spot color CMYK is: " />
+                        <Label fx:id="labelRgb" layoutX="1.0" layoutY="259.0" prefHeight="40.0" prefWidth="280.0" text="Spot color RGB is: " />
+                        <Label fx:id="roundedCmykLabel" layoutX="246.0" layoutY="219.0" prefHeight="40.0" prefWidth="238.0" text="Rounded CMYK is: " />
+                        <ColorPicker fx:id="colorPicker" layoutX="1.0" layoutY="299.0" prefHeight="49.0" prefWidth="445.0" />
+                        <Label fx:id="displayedColorName" alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="25.0" prefHeight="39.0" prefWidth="445.0" text="Label">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
                      </children>
                   </Pane>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="99.0" layoutY="14.0" prefHeight="39.0" prefWidth="598.0" text="Pick the Oracal(tm) number from dropdown list">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="99.0" layoutY="14.0" prefHeight="39.0" prefWidth="598.0" text="Pick the Oracal(tm) or Pantone(tm) number from dropdown lists">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
+                  <Label layoutX="32.0" layoutY="77.0" prefHeight="24.0" prefWidth="216.0" text="Oracal(tm) number" />
+                  <ChoiceBox fx:id="spotColorsChoiceBox" layoutX="32.0" layoutY="104.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="196.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) coated number" />
+                  <ChoiceBox fx:id="pantoneCoatedChoicebox" layoutX="32.0" layoutY="223.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="255.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) uncoated number" />
+                  <ChoiceBox fx:id="pantoneUncoatedChoicebox" layoutX="30.0" layoutY="282.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="313.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) pastels neons " />
+                  <ChoiceBox fx:id="pantonePastelsNeonsChoicebox" layoutX="32.0" layoutY="340.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="138.0" prefHeight="24.0" prefWidth="216.0" text="RAL(tm) color number" />
+                  <ChoiceBox fx:id="ralColorsChoiceBox" layoutX="32.0" layoutY="165.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="373.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) metallic" />
+                  <ChoiceBox fx:id="pantoneMetallic" layoutX="32.0" layoutY="400.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="431.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) skins" />
+                  <ChoiceBox fx:id="pantoneSkinsChoiceBox" layoutX="32.0" layoutY="458.0" prefHeight="25.0" prefWidth="215.0" />
+                  <Label layoutX="32.0" layoutY="489.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) color of the year" />
+                  <ChoiceBox fx:id="pantoneColorOfTheYearChoicebox" layoutX="32.0" layoutY="516.0" prefHeight="25.0" prefWidth="215.0" />
                </children></AnchorPane>
         </content>
       </Tab>

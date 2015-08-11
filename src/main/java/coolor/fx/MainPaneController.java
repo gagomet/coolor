@@ -6,7 +6,8 @@ import coolor.colorspaces.CMYK;
 import coolor.colorspaces.RGB;
 import coolor.converter.ColorConverter;
 import coolor.dto.CurrencyDTO;
-import coolor.parcer.ParseXml;
+import coolor.parcer.ParsePantoneCsv;
+import coolor.parcer.ParseXmlOracals;
 import coolor.translate.CurrencyTranslator;
 import export.XlsCRUD;
 import export.impl.XlsFilesManager;
@@ -15,7 +16,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.InputMethodRequests;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -91,17 +91,31 @@ public class MainPaneController extends AbstractController {
     @FXML
     private ChoiceBox<SpotColor> spotColorsChoiceBox;
     @FXML
+    private ChoiceBox<SpotColor> pantoneCoatedChoicebox;
+    @FXML
+    private ChoiceBox<SpotColor> pantoneUncoatedChoicebox;
+    @FXML
+    private ChoiceBox<SpotColor> pantonePastelsNeonsChoicebox;
+    @FXML
+    private ChoiceBox<SpotColor> pantoneMetallic;
+    @FXML
+    private ChoiceBox<SpotColor> pantoneColorOfTheYearChoicebox;
+    @FXML
+    private ChoiceBox<SpotColor> pantoneSkinsChoiceBox;
+    @FXML
+    private ChoiceBox<SpotColor> ralColorsChoiceBox;
+    @FXML
     private Pane colorsPane;
     @FXML
     private Rectangle spotColorRectangle;
     @FXML
     private Rectangle roundedSpotColorRectangle;
     @FXML
+    private Label displayedColorName;
+    @FXML
     private Label labelCmyk;
     @FXML
     private Label labelRgb;
-    @FXML
-    private Label labelHex;
     @FXML
     private Label roundedCmykLabel;
     @FXML
@@ -226,28 +240,40 @@ public class MainPaneController extends AbstractController {
     }
 
     protected void initChoiceBoxes() {
-        ObservableList<SpotColor> spotColorsObservableList = FXCollections.observableArrayList();
-        ParseXml parseXml = new ParseXml();
-        Map<String, CMYK> oracalsMap = parseXml.getOracalsMap(
+        ObservableList<SpotColor> oracalsObservableList = FXCollections.observableArrayList();
+        ParseXmlOracals parseXmlOracals = new ParseXmlOracals();
+        Map<String, CMYK> oracalsMap = parseXmlOracals.getOracalsMap(
                 new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
-        List<SpotColor> spotColorList = new ArrayList<>();
+        List<SpotColor> oracalsColorList = new ArrayList<>();
         Iterator iterator = oracalsMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, CMYK> pair = (Map.Entry<String, CMYK>) iterator.next();
-            SpotColor temporaryColor = new SpotColor(pair.getKey(), pair.getValue());
-            temporaryColor.setRgb(ColorConverter.getInstance().cmykToRgb(pair.getValue()));
-            temporaryColor.setHex(ColorConverter.getInstance().rgbToHexString(temporaryColor.getRgb()));
-            spotColorList.add(temporaryColor);
+            SpotColor temporaryColor = new SpotColor("Oracal " + pair.getKey(), pair.getValue());
+            oracalsColorList.add(temporaryColor);
         }
-        spotColorsObservableList.addAll(spotColorList);
+        oracalsObservableList.addAll(oracalsColorList);
         spotColorsChoiceBox.setConverter(new SpotColorConverter());
-        spotColorsChoiceBox.setItems(spotColorsObservableList);
+        spotColorsChoiceBox.setItems(oracalsObservableList);
         spotColorsChoiceBox.getSelectionModel().selectedIndexProperty()
                            .addListener((ov, value, new_value) -> {
-                               //TODO implement logic of choicebox
-                               SpotColor spotColor = spotColorList.get(new_value.intValue());
+                               SpotColor spotColor = oracalsColorList.get(new_value.intValue());
                                handleSpotColorChanges(spotColor);
                            });
+        initChoiceBoxByCsvFileName(pantoneCoatedChoicebox, "pantone-coated.csv", null);
+        initChoiceBoxByCsvFileName(pantoneUncoatedChoicebox, "pantone-uncoated.csv", null);
+        initChoiceBoxByCsvFileName(pantoneColorOfTheYearChoicebox, "pantone-color-of-the-year.csv", null);
+        initChoiceBoxByCsvFileName(pantoneMetallic, "pantone-metallic.csv", null);
+        initChoiceBoxByCsvFileName(pantonePastelsNeonsChoicebox, "pantone-pastels-neons.csv", null);
+
+        ParsePantoneCsv parsePantoneCsv = new ParsePantoneCsv();
+
+        File skinsFile = new File(MainPaneController.class.getClassLoader().getResource("pantone-skin.csv").getPath());
+        List<SpotColor> parsedSkinPantones = parsePantoneCsv.getSkinPantoneFromCsv(skinsFile);
+        initChoiceBoxByReadyList(pantoneSkinsChoiceBox, parsedSkinPantones);
+
+        File ralsFile = new File(MainPaneController.class.getClassLoader().getResource("ral_standard.csv").getPath());
+        List<SpotColor> parsedRals = parsePantoneCsv.getRalColorsFromCsv(ralsFile);
+        initChoiceBoxByReadyList(ralColorsChoiceBox, parsedRals);
     }
 
     private void scanFolder() {
@@ -296,16 +322,41 @@ public class MainPaneController extends AbstractController {
         colorsPane.setVisible(true);
         labelCmyk.setText("CMYK: " + spotColor.getCmyk().toString());
         labelRgb.setText("RGB: " + spotColor.getRgb().toString());
-        labelHex.setText(spotColor.getHex().toString());
         RGB roundedRgb = ColorConverter.getInstance().cmykToRgb(spotColor.getCmyk().getRoundedCmyk());
         Color roundedColor = Color.color(roundedRgb.getRed() / RGB_BYTES, roundedRgb.getGreen() / RGB_BYTES,
                 roundedRgb.getBlue() / RGB_BYTES);
         roundedSpotColorRectangle.setFill(roundedColor);
         roundedCmykLabel.setText("Rounded CMYK: " + spotColor.getCmyk().getRoundedCmyk().toString());
         colorPicker.setValue(roundedColor);
+        displayedColorName.setText(spotColor.getName());
         log.info("rounded color: " + spotColor.getCmyk().getRoundedCmyk().toString());
         log.info(spotColor.getCmyk().toString());
     }
+
+    private void initChoiceBoxByCsvFileName(ChoiceBox choiceBox, String csvFileName,
+                                            List<SpotColor> spotColorsList) {
+        if (spotColorsList == null) {
+            ParsePantoneCsv parsePantoneCsv = new ParsePantoneCsv();
+            List<SpotColor> parsedPantones = parsePantoneCsv.getSpotColorsFromCsv(
+                    new File(MainPaneController.class.getClassLoader().getResource(csvFileName).getPath()));
+            initChoiceBoxByReadyList(choiceBox, parsedPantones);
+        } else {
+            initChoiceBoxByReadyList(choiceBox, spotColorsList);
+        }
+    }
+
+    private void initChoiceBoxByReadyList(ChoiceBox choiceBox, List<SpotColor> spotColorsList) {
+        ObservableList<SpotColor> spotColorsObservableList = FXCollections.observableArrayList();
+        spotColorsObservableList.addAll(spotColorsList);
+        choiceBox.setConverter(new SpotColorConverter());
+        choiceBox.setItems(spotColorsObservableList);
+        choiceBox.getSelectionModel().selectedIndexProperty()
+                 .addListener((ov, value, new_value) -> {
+                     SpotColor spotColor = spotColorsList.get(new_value.intValue());
+                     handleSpotColorChanges(spotColor);
+                 });
+    }
+
 
     private class ButtonCell extends TableCell<ImageModel, Boolean> {
 

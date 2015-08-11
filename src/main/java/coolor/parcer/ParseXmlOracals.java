@@ -19,9 +19,9 @@ import java.util.TreeMap;
 /**
  * Created by Padonag on 24.09.2014.
  */
-public class ParseXml {
+public class ParseXmlOracals {
 
-    public ParseXml() {
+    public ParseXmlOracals() {
 
     }
 

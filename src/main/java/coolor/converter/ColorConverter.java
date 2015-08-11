@@ -6,15 +6,19 @@ import coolor.colorspaces.Hex;
 import coolor.colorspaces.RGB;
 
 import java.awt.Color;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 /**
  * Created by Padonag on 24.09.2014.
  */
 public class ColorConverter {
-    private static final int MAX_RGB = 255;
+
+    private static final double MAX_RGB = 255d;
     private static final int MAX_CMYK = 100;
     private static final int HEX = 16;
-    private static final char[] HEX_CHARACTERS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] HEX_CHARACTERS
+            = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
     private ColorConverter() {
@@ -22,6 +26,7 @@ public class ColorConverter {
     }
 
     private static class Holder {
+
         private static final ColorConverter INSTANCE = new ColorConverter();
     }
 
@@ -39,7 +44,8 @@ public class ColorConverter {
         double M = (1 - greenCoef - K) / (1 - K);
         double Y = (1 - blueCoef - K) / (1 - K);
 
-        return new CMYK(C * MAX_CMYK, M * MAX_CMYK, Y * MAX_CMYK, K * MAX_CMYK);
+        return new CMYK(Math.round(C * MAX_CMYK * 100) / 100, Math.round(M * MAX_CMYK * 100) / 100,
+                Math.round(Y * MAX_CMYK * 100) / 100, Math.round(K * MAX_CMYK * 100) / 100);
     }
 
     public RGB cmykToRgb(CMYK cmyk) {
@@ -67,9 +73,9 @@ public class ColorConverter {
         return hex;
     }
 
-    public String rgbToHexString(RGB rgb){
+    public String rgbToHexString(RGB rgb) {
         Color color = new Color(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
-        return "Hex color is: #"+Integer.toHexString(color.getRGB()).substring(2);
+        return "Hex color is: #" + Integer.toHexString(color.getRGB()).substring(2);
     }
 
     public RGB hexToRgb(Hex hex) {

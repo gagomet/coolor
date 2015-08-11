@@ -16,6 +16,12 @@ public class Hex implements Colorspace {
 
     }
 
+    public Hex(String hexString){
+        this.hexRed = hexString.substring(1,3);
+        this.hexGreen = hexString.substring(3,5);
+        this.hexBlue = hexString.substring(5,7);
+    }
+
     public String getHexRed() {
         return hexRed;
     }

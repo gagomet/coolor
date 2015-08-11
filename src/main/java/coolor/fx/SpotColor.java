@@ -4,6 +4,7 @@ import coolor.colorspaces.CMYK;
 import coolor.colorspaces.Colorspace;
 import coolor.colorspaces.Hex;
 import coolor.colorspaces.RGB;
+import coolor.converter.ColorConverter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -14,7 +15,7 @@ public class SpotColor {
     private String name;
     private CMYK cmyk;
     private RGB rgb;
-    private String hex;
+    private Hex hex;
 
     public SpotColor(String name) {
         this.name = name;
@@ -22,7 +23,19 @@ public class SpotColor {
 
     public SpotColor(String name, Colorspace colorspace) {
         this.name = name;
-        this.cmyk = (CMYK)colorspace;
+        if (colorspace instanceof CMYK) {
+            this.cmyk = (CMYK) colorspace;
+            this.rgb = ColorConverter.getInstance().cmykToRgb(cmyk);
+            this.hex = ColorConverter.getInstance().rgbToHex(rgb);
+        } else if (colorspace instanceof RGB){
+            this.rgb = (RGB) colorspace;
+            this.cmyk = ColorConverter.getInstance().rgbToCmyk(rgb);
+            this.hex = ColorConverter.getInstance().rgbToHex(rgb);
+        } else if (colorspace instanceof Hex){
+            this.hex = (Hex) colorspace;
+            this.rgb = ColorConverter.getInstance().hexToRgb(hex);
+            this.cmyk = ColorConverter.getInstance().rgbToCmyk(rgb);
+        }
     }
 
     public String getName() {
@@ -49,19 +62,16 @@ public class SpotColor {
         this.rgb = rgb;
     }
 
-    public String getHex() {
+    public Hex getHex() {
         return hex;
     }
 
-    public void setHex(String hex) {
+    public void setHex(Hex hex) {
         this.hex = hex;
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Oracal  ");
-        builder.append(this.getName());
-        return builder.toString();
+        return this.getName();
     }
 }
