@@ -25,12 +25,18 @@ import javafx.util.StringConverter;
 import org.apache.commons.imaging.ImageInfo;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 /**
@@ -243,7 +249,7 @@ public class MainPaneController extends AbstractController {
         ObservableList<SpotColor> oracalsObservableList = FXCollections.observableArrayList();
         ParseXmlOracals parseXmlOracals = new ParseXmlOracals();
         Map<String, CMYK> oracalsMap = parseXmlOracals.getOracalsMap(
-                new File(MainPaneController.class.getClassLoader().getResource("oracals.xml").getPath()));
+                this.getClass().getResourceAsStream("/oracals.xml"));
         List<SpotColor> oracalsColorList = new ArrayList<>();
         Iterator iterator = oracalsMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -259,20 +265,20 @@ public class MainPaneController extends AbstractController {
                                SpotColor spotColor = oracalsColorList.get(new_value.intValue());
                                handleSpotColorChanges(spotColor);
                            });
-        initChoiceBoxByCsvFileName(pantoneCoatedChoicebox, "pantone-coated.csv", null);
-        initChoiceBoxByCsvFileName(pantoneUncoatedChoicebox, "pantone-uncoated.csv", null);
-        initChoiceBoxByCsvFileName(pantoneColorOfTheYearChoicebox, "pantone-color-of-the-year.csv", null);
-        initChoiceBoxByCsvFileName(pantoneMetallic, "pantone-metallic.csv", null);
-        initChoiceBoxByCsvFileName(pantonePastelsNeonsChoicebox, "pantone-pastels-neons.csv", null);
+        initChoiceBoxByCsvFileName(pantoneCoatedChoicebox, "/pantone-coated.csv", null);
+        initChoiceBoxByCsvFileName(pantoneUncoatedChoicebox, "/pantone-uncoated.csv", null);
+        initChoiceBoxByCsvFileName(pantoneColorOfTheYearChoicebox, "/pantone-color-of-the-year.csv", null);
+        initChoiceBoxByCsvFileName(pantoneMetallic, "/pantone-metallic.csv", null);
+        initChoiceBoxByCsvFileName(pantonePastelsNeonsChoicebox, "/pantone-pastels-neons.csv", null);
 
         ParsePantoneCsv parsePantoneCsv = new ParsePantoneCsv();
 
-        File skinsFile = new File(MainPaneController.class.getClassLoader().getResource("pantone-skin.csv").getPath());
-        List<SpotColor> parsedSkinPantones = parsePantoneCsv.getSkinPantoneFromCsv(skinsFile);
+        List<SpotColor> parsedSkinPantones = parsePantoneCsv.getSkinPantoneFromCsv(
+                this.getClass().getResourceAsStream("/pantone-skin.csv"));
         initChoiceBoxByReadyList(pantoneSkinsChoiceBox, parsedSkinPantones);
 
-        File ralsFile = new File(MainPaneController.class.getClassLoader().getResource("ral_standard.csv").getPath());
-        List<SpotColor> parsedRals = parsePantoneCsv.getRalColorsFromCsv(ralsFile);
+        List<SpotColor> parsedRals = parsePantoneCsv.getRalColorsFromCsv(
+                this.getClass().getResourceAsStream("/ral_standard.csv"));
         initChoiceBoxByReadyList(ralColorsChoiceBox, parsedRals);
     }
 
@@ -338,7 +344,7 @@ public class MainPaneController extends AbstractController {
         if (spotColorsList == null) {
             ParsePantoneCsv parsePantoneCsv = new ParsePantoneCsv();
             List<SpotColor> parsedPantones = parsePantoneCsv.getSpotColorsFromCsv(
-                    new File(MainPaneController.class.getClassLoader().getResource(csvFileName).getPath()));
+                    this.getClass().getResourceAsStream(csvFileName));
             initChoiceBoxByReadyList(choiceBox, parsedPantones);
         } else {
             initChoiceBoxByReadyList(choiceBox, spotColorsList);
