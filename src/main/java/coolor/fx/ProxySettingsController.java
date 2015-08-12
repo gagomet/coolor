@@ -36,6 +36,8 @@ public class ProxySettingsController extends AbstractController {
             starter.initUserProxy();
             starter.getUserProxy().setProxyHost(proxyHost.getText());
             starter.getUserProxy().setProxyPort(Integer.parseInt(proxyPort.getText()));
+            System.setProperty("http.proxyHost", proxyHost.getText());
+            System.setProperty("http.proxyPort", proxyPort.getText());
             starter.closeProxySettings();
         });
 

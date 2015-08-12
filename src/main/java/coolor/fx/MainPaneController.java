@@ -19,24 +19,20 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.apache.commons.imaging.ImageInfo;
 
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+
 
 
 /**
@@ -126,6 +122,10 @@ public class MainPaneController extends AbstractController {
     private Label roundedCmykLabel;
     @FXML
     private ColorPicker colorPicker;
+
+    //Layout tab
+    @FXML
+    private WebView layoutWebView;
 
     private TableColumn deleteButtonColumn;
 
@@ -280,6 +280,13 @@ public class MainPaneController extends AbstractController {
         List<SpotColor> parsedRals = parsePantoneCsv.getRalColorsFromCsv(
                 this.getClass().getResourceAsStream("/ral_standard.csv"));
         initChoiceBoxByReadyList(ralColorsChoiceBox, parsedRals);
+    }
+
+    protected void initWebView(){
+    System.setProperty("http.proxyHost", "db-proxy-df.dbdc.luxoft.com");
+    System.setProperty("http.proxyPort", "8080");
+        WebEngine engine = layoutWebView.getEngine();
+        engine.load("http://google.com");
     }
 
     private void scanFolder() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
@@ -17,7 +18,7 @@
                         <CheckBox fx:id="handleQuantity" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" text="Handle images quantity via file name" />
                         <Button fx:id="chooseDirectoryButton" layoutX="566.0" layoutY="37.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="100.0" text="Choose folder" />
                         <Label fx:id="errorMessage" layoutX="573.0" layoutY="77.0" prefHeight="20.0" prefWidth="207.0" text="error!" textFill="#f50303" />
-                        <CheckBox fx:id="calculateCost" layoutX="247.0" layoutY="75.0" mnemonicParsing="false" text="I want to calculate cost of printing" />
+                        <CheckBox fx:id="calculateCost" layoutX="247.0" layoutY="75.0" mnemonicParsing="false" text="I want to calculate cost of printing (Internet connection needed!)" />
                         <Pane fx:id="currencyPane" layoutX="23.0" layoutY="98.0" prefHeight="48.0" prefWidth="759.0">
                            <children>
                               <TextField fx:id="costSqMeter" layoutX="515.0" layoutY="8.0" prefHeight="28.0" prefWidth="77.0" />
@@ -114,6 +115,15 @@
                   <Label layoutX="32.0" layoutY="489.0" prefHeight="24.0" prefWidth="216.0" text="Pantone(tm) color of the year" />
                   <ChoiceBox fx:id="pantoneColorOfTheYearChoicebox" layoutX="32.0" layoutY="516.0" prefHeight="25.0" prefWidth="215.0" />
                </children></AnchorPane>
+        </content>
+      </Tab>
+      <Tab text="Layout Images(Internet connection requred)">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <WebView fx:id="layoutWebView" layoutX="232.0" layoutY="14.0" prefHeight="571.0" prefWidth="545.0" />
+               </children>
+            </AnchorPane>
         </content>
       </Tab>
    </tabs>

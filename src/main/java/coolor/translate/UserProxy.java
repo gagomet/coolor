@@ -7,6 +7,15 @@ public class UserProxy {
     String proxyHost;
     Integer proxyPort;
 
+    public UserProxy(){
+
+    }
+
+    public UserProxy(String proxyHost, Integer proxyPort) {
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+    }
+
     public String getProxyHost() {
         return proxyHost;
     }
