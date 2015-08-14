@@ -14,6 +14,8 @@ public class UserProxy {
     public UserProxy(String proxyHost, Integer proxyPort) {
         this.proxyHost = proxyHost;
         this.proxyPort = proxyPort;
+        System.setProperty("http.proxyHost", proxyHost);
+        System.setProperty("http.proxyPort", proxyPort.toString());
     }
 
     public String getProxyHost() {

@@ -57,7 +57,6 @@ public class Starter extends Application {
             mainPaneController.initCheckboxes();
             mainPaneController.initDeleteButtons();
             mainPaneController.initChoiceBoxes();
-            mainPaneController.initWebView();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();

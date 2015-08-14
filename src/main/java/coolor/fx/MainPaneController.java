@@ -6,6 +6,7 @@ import coolor.colorspaces.CMYK;
 import coolor.colorspaces.RGB;
 import coolor.converter.ColorConverter;
 import coolor.dto.CurrencyDTO;
+import coolor.layout.WebServiceTranslator;
 import coolor.parcer.ParsePantoneCsv;
 import coolor.parcer.ParseXmlOracals;
 import coolor.translate.CurrencyTranslator;
@@ -19,7 +20,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -125,7 +125,7 @@ public class MainPaneController extends AbstractController {
 
     //Layout tab
     @FXML
-    private WebView layoutWebView;
+    private Button startLayoutButton;
 
     private TableColumn deleteButtonColumn;
 
@@ -207,6 +207,11 @@ public class MainPaneController extends AbstractController {
             File selectedFile = fileChooser.showSaveDialog(starter.getPrimaryStage());
             xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
         });
+
+        startLayoutButton.setOnAction(event -> {
+            WebServiceTranslator translator = new WebServiceTranslator();
+            translator.translate();
+        });
     }
 
     protected void initMenus() {
@@ -282,11 +287,8 @@ public class MainPaneController extends AbstractController {
         initChoiceBoxByReadyList(ralColorsChoiceBox, parsedRals);
     }
 
-    protected void initWebView(){
-    System.setProperty("http.proxyHost", "db-proxy-df.dbdc.luxoft.com");
-    System.setProperty("http.proxyPort", "8080");
-        WebEngine engine = layoutWebView.getEngine();
-        engine.load("http://google.com");
+    private void initLayoutPane(){
+
     }
 
     private void scanFolder() {
