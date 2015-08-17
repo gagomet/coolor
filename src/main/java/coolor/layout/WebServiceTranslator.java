@@ -1,15 +1,11 @@
 package coolor.layout;
 
-import coolor.fx.MainPaneController;
 import coolor.translate.UserProxy;
-import javafx.concurrent.Worker;
-import javafx.event.EventHandler;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebEvent;
+
 
 import java.awt.Desktop;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,8 +15,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by KAKolesnikov on 2015-08-12.
@@ -29,18 +27,16 @@ public class WebServiceTranslator {
 
     private Proxy proxy;
     private UserProxy userProxy;
-    private MainPaneController controller;
     private String result;
 
     public WebServiceTranslator() {
     }
 
-    public WebServiceTranslator(UserProxy userProxy, MainPaneController controller) {
+    public WebServiceTranslator(UserProxy userProxy) {
         this.userProxy = userProxy;
-        this.controller = controller;
     }
 
-    public void translate() {
+    public String translate() {
         HttpURLConnection conn = null;
         if (userProxy != null) {
             try {
@@ -70,7 +66,7 @@ public class WebServiceTranslator {
         try {
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
-            String params = "bins=0:50:1600x5000&items=0:0:1:1100x1000,1:0:1:700x2200,2:0:1:700x2200&binId=0";
+            String params = "bins=0:50:1600x5000&items=1:0:1:1100x1000,2:0:1:700x2200,3:0:1:700x2200&binId=0";
 
             osw.write(params);
             osw.flush();
@@ -80,22 +76,53 @@ public class WebServiceTranslator {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             File file = new File("C:\\sample\\temp.html");
             FileWriter writer = new FileWriter(file);
-            BufferedWriter bufWriter = new BufferedWriter(writer);
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = rd.readLine()) != null) {
-                writer.write(line);
-                writer.write("\n");
-                sb.append(line);
-                sb.append("\n");
+                if (line.contains("three.min.js")) {
+                    System.out.println("prevented");
+                    sb.append(getScriptText("/js/three.min.js"));
+                    writer.write(getScriptText("/js/three.min.js"));
+                } else if (line.contains("TrackballControls.js")) {
+                    System.out.println("prevented2");
+                    sb.append(getScriptText("/js/TrackballControls.js"));
+                    writer.write(getScriptText("/js/TrackballControls.js"));
+                } else if (line.contains("Detector.js")) {
+                    System.out.println("prevented3");
+                    sb.append(getScriptText("/js/Detector.js"));
+                    writer.write(getScriptText("/js/Detector.js"));
+                } else if (line.contains("stats.min.js")) {
+                    System.out.println("prevented4");
+                    sb.append(getScriptText("/js/stats.min.js"));
+                    writer.write(getScriptText("/js/stats.min.js"));
+                } else {
+                    writer.write(line);
+                    writer.write("\n");
+                    sb.append(line);
+                    sb.append("\n");
+                }
             }
             rd.close();
             writer.close();
-            result = sb.toString();
+
             Desktop.getDesktop().browse(file.toURI());
-            System.out.println(result);
         } catch(IOException e) {
             e.printStackTrace();
         }
+        return result;
+    }
+
+    private String getScriptText(String scriptUrl) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            Path resourcePath = Paths.get(this.getClass().getResource(scriptUrl).toURI());
+            sb.append("<script type=\"text/javascript\" src=\"")
+              .append(resourcePath)
+              .append("\"></script>");
+            sb.append("\n");
+        } catch(URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 }

@@ -79,8 +79,6 @@ public class MainPaneController extends AbstractController {
     @FXML
     private TableColumn<ImageModel, Number> area;
     @FXML
-    private TableColumn<ImageModel, ImageInfo.ColorType> colorSpace;
-    @FXML
     private TableColumn<ImageModel, Number> cost;
     @FXML
     private RadioButton radioUsd;
@@ -156,7 +154,6 @@ public class MainPaneController extends AbstractController {
                                       .asString()
                             : cellData.getValue().undefinedProperty());
         area.setCellValueFactory(cellData -> cellData.getValue().areaProperty());
-        colorSpace.setCellValueFactory(cellData -> cellData.getValue().colorspaceProperty());
         cost.setCellValueFactory(cellData -> cellData.getValue().costProperty());
         exportToExcel.setDisable(true);
         errorMessage.setVisible(false);

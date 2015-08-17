@@ -57,7 +57,6 @@
                       <TableColumn fx:id="quantity" minWidth="8.0" prefWidth="60.0" text="Quantity" />
                       <TableColumn fx:id="width" minWidth="0.0" prefWidth="60.0" text="Width" />
                       <TableColumn fx:id="height" prefWidth="60.0" text="Height" />
-                      <TableColumn fx:id="colorSpace" prefWidth="80.0" text="Color space" />
                       <TableColumn fx:id="area" prefWidth="80.0" text="Area" />
                       <TableColumn fx:id="cost" prefWidth="80.0" text="Cost" />
                     </columns>
