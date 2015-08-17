@@ -80,6 +80,10 @@ public class WebServiceTranslator {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = rd.readLine()) != null) {
+                if(line.contains("<body>")){
+                    writer.write("<body>");
+                    writer.write("<h3>Scroll the mouse please</h3>");
+                }
                 if (line.contains("three.min.js")) {
                     System.out.println("prevented");
                     sb.append(getScriptText("/js/three.min.js"));
@@ -96,7 +100,11 @@ public class WebServiceTranslator {
                     System.out.println("prevented4");
                     sb.append(getScriptText("/js/stats.min.js"));
                     writer.write(getScriptText("/js/stats.min.js"));
-                } else {
+                }
+                else if (line.contains("button")) {
+                    System.out.println("button dawn");
+                }
+                else {
                     writer.write(line);
                     writer.write("\n");
                     sb.append(line);
