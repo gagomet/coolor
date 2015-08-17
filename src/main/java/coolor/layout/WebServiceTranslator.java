@@ -17,6 +17,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -66,7 +67,7 @@ public class WebServiceTranslator {
         try {
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
-            String params = "bins=0:50:1600x5000&items=1:0:1:1100x1000,2:0:1:700x2200,3:0:1:700x2200&binId=0";
+            String params = "bins=0:50:160x500&items=1:0:1:110x100,2:0:1:70x220,3:0:1:70x220&binId=0";
 
             osw.write(params);
             osw.flush();
@@ -106,6 +107,7 @@ public class WebServiceTranslator {
             writer.close();
 
             Desktop.getDesktop().browse(file.toURI());
+            System.out.println(new String(Files.readAllBytes(Paths.get(file.toURI()))));
         } catch(IOException e) {
             e.printStackTrace();
         }
