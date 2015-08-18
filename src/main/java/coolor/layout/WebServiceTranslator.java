@@ -6,6 +6,7 @@ import coolor.translate.UserProxy;
 import java.awt.Desktop;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,22 +29,119 @@ public class WebServiceTranslator {
 
     private Proxy proxy;
     private UserProxy userProxy;
-    private String result;
 
     public WebServiceTranslator() {
     }
 
-    public WebServiceTranslator(UserProxy userProxy) {
-        this.userProxy = userProxy;
+    public void translate() {
+        HttpURLConnection conn = prepareConnection("http://www.packit4me.com/api/call/preview");
+        try {
+            assert conn != null;
+            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+
+            String params = "bins=0:50:160x1000&items=1:0:1:110x100,2:0:1:70x220,3:0:1:70x220&binId=0";
+
+            osw.write(params);
+            osw.flush();
+            osw.close();
+
+            InputStream is = conn.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            Path directory = Files.createTempDirectory("javatmp");
+            Path tempFile = Files.createTempFile(directory, "pathFile", ".html");
+            File file = Files.createTempFile(directory, "temp", ".html").toFile();
+            FileWriter writer = new FileWriter(file);
+            BufferedWriter out = new BufferedWriter(writer);
+            System.out.println(file.getAbsolutePath());
+            String line;
+            while ((line = rd.readLine()) != null) {
+                if (line.contains("<body>")) {
+                    out.write("<body>");
+                    out.write("<h3>Scroll the mouse please</h3>");
+                    out.write(
+                            "<h3>Use mouse scroll to zoom in/out. Hold RMB and drag mouse to navigate on length of canvas</h3>");
+                }
+                if (line.contains("three.min.js")) {
+                    Files.write(tempFile, getScriptText("/js/three.min.js").getBytes());
+                    out.write(getScriptText("/js/three.min.js"));
+                } else if (line.contains("TrackballControls.js")) {
+                    Files.write(tempFile, getScriptText("/js/TrackballControls.js").getBytes());
+                    out.write(getScriptText("/js/TrackballControls.js"));
+                } else if (line.contains("Detector.js")) {
+                    Files.write(tempFile, getScriptText("/js/Detector.js").getBytes());
+                    out.write(getScriptText("/js/Detector.js"));
+                } else if (line.contains("stats.min.js")) {
+                    Files.write(tempFile, getScriptText("/js/stats.min.js").getBytes());
+                    out.write(getScriptText("/js/stats.min.js"));
+                } else if (line.contains("button")) {
+                    System.out.println("button dawn");
+                } else {
+                    Files.write(tempFile, line.getBytes());
+                    Files.write(tempFile, "\n".getBytes());
+                    out.write(line);
+                    out.write("\n");
+                }
+            }
+            rd.close();
+            out.close();
+            writer.close();
+            Desktop.getDesktop().browse(file.toURI());
+            Desktop.getDesktop().browse(tempFile.toUri());
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String translate() {
+    public String translateRawJson(){
+        HttpURLConnection conn = prepareConnection("http://www.packit4me.com/api/call/raw");
+        StringBuilder builder = new StringBuilder();
+        try {
+            assert conn != null;
+            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+
+            String params = "bins=0:50:160x1000&items=1:0:1:110x100,2:0:1:70x220,3:0:1:70x220&binId=0";
+
+            osw.write(params);
+            osw.flush();
+            osw.close();
+
+            InputStream is = conn.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                    builder.append(line);
+                    builder.append("\n");
+                }
+
+            rd.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return builder.toString();
+    }
+
+    private String getScriptText(String scriptUrl) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            Path resourcePath = Paths.get(this.getClass().getResource(scriptUrl).toURI());
+            sb.append("<script type=\"text/javascript\">")
+              .append(new String(Files.readAllBytes(resourcePath)))
+              .append("</script>");
+
+            sb.append("\n");
+        } catch(URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    private HttpURLConnection prepareConnection(String urlToApi){
         HttpURLConnection conn = null;
         if (userProxy != null) {
             try {
                 proxy = new Proxy(Proxy.Type.HTTP,
                         new InetSocketAddress(userProxy.getProxyHost(), userProxy.getProxyPort()));
-                URL addr = new URL("http://www.packit4me.com/api/call/preview");
+                URL addr = new URL(urlToApi);
                 conn = (HttpURLConnection) addr.openConnection(proxy);
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
@@ -54,7 +152,7 @@ public class WebServiceTranslator {
             }
         } else {
             try {
-                URL addr = new URL("http://www.packit4me.com/api/call/preview");
+                URL addr = new URL(urlToApi);
                 conn = (HttpURLConnection) addr.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
@@ -64,75 +162,6 @@ public class WebServiceTranslator {
                 e.printStackTrace();
             }
         }
-        try {
-            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-
-            String params = "bins=0:50:160x500&items=1:0:1:110x100,2:0:1:70x220,3:0:1:70x220&binId=0";
-
-            osw.write(params);
-            osw.flush();
-            osw.close();
-
-            InputStream is = conn.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            File file = new File("C:\\sample\\temp.html");
-            FileWriter writer = new FileWriter(file);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                if(line.contains("<body>")){
-                    writer.write("<body>");
-                    writer.write("<h3>Scroll the mouse please</h3>");
-                }
-                if (line.contains("three.min.js")) {
-                    System.out.println("prevented");
-                    sb.append(getScriptText("/js/three.min.js"));
-                    writer.write(getScriptText("/js/three.min.js"));
-                } else if (line.contains("TrackballControls.js")) {
-                    System.out.println("prevented2");
-                    sb.append(getScriptText("/js/TrackballControls.js"));
-                    writer.write(getScriptText("/js/TrackballControls.js"));
-                } else if (line.contains("Detector.js")) {
-                    System.out.println("prevented3");
-                    sb.append(getScriptText("/js/Detector.js"));
-                    writer.write(getScriptText("/js/Detector.js"));
-                } else if (line.contains("stats.min.js")) {
-                    System.out.println("prevented4");
-                    sb.append(getScriptText("/js/stats.min.js"));
-                    writer.write(getScriptText("/js/stats.min.js"));
-                }
-                else if (line.contains("button")) {
-                    System.out.println("button dawn");
-                }
-                else {
-                    writer.write(line);
-                    writer.write("\n");
-                    sb.append(line);
-                    sb.append("\n");
-                }
-            }
-            rd.close();
-            writer.close();
-
-            Desktop.getDesktop().browse(file.toURI());
-            System.out.println(new String(Files.readAllBytes(Paths.get(file.toURI()))));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    private String getScriptText(String scriptUrl) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            Path resourcePath = Paths.get(this.getClass().getResource(scriptUrl).toURI());
-            sb.append("<script type=\"text/javascript\" src=\"")
-              .append(resourcePath)
-              .append("\"></script>");
-            sb.append("\n");
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
+        return conn;
     }
 }
