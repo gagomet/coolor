@@ -134,18 +134,35 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>net.orfjackal.retrolambda</groupId>
-        <artifactId>retrolambda-maven-plugin</artifactId>
-        <version>2.0.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>process-main</goal>
-              <goal>process-test</goal>
-            </goals>
-          </execution>
-        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <!-- DO NOT include log4j.properties file in your Jar -->
+          <excludes>
+            <exclude>**/log4j.properties</exclude>
+          </excludes>
+          <archive>
+            <manifest>
+              <!-- Jar file entry point -->
+              <mainClass>coolor.fx.Starter</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
+
+      <!--<plugin>-->
+        <!--<groupId>net.orfjackal.retrolambda</groupId>-->
+        <!--<artifactId>retrolambda-maven-plugin</artifactId>-->
+        <!--<version>2.0.5</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<goals>-->
+              <!--<goal>process-main</goal>-->
+              <!--<goal>process-test</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
     </plugins>
     <finalName>PolyArea</finalName>
   </build>
