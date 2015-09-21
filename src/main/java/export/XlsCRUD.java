@@ -1,17 +1,18 @@
 package export;
 
-import coolor.ImageModel;
+import coolor.models.BlankImageModel;
+import coolor.models.ImageModel;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 
 public interface XlsCRUD {
-    public File createXlsFile(String name, List<ImageModel> dataToFile);
+    public File createXlsFile(String name, List<BlankImageModel> dataToFile);
 
-    public List<ImageModel> readCompaniesListFromXlsFile(FileInputStream fis);
+    public List<BlankImageModel> readCompaniesListFromXlsFile(FileInputStream fis);
 
-    public boolean updateXlsFile(File existFile, List<ImageModel> newData);
+    public boolean updateXlsFile(File existFile, List<BlankImageModel> newData);
 
     public boolean deleteXlsFile(File file);
 }

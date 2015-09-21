@@ -1,12 +1,12 @@
 package coolor.fx;
 
-import coolor.ImageModel;
+import coolor.models.BlankImageModel;
+import coolor.models.ImageModel;
 import coolor.area.FolderReader;
 import coolor.colorspaces.CMYK;
 import coolor.colorspaces.RGB;
 import coolor.converter.ColorConverter;
 import coolor.dto.CurrencyDTO;
-import coolor.layout.WebServiceTranslator;
 import coolor.parcer.ParsePantoneCsv;
 import coolor.parcer.ParseXmlOracals;
 import coolor.translate.CurrencyTranslator;
@@ -63,7 +63,7 @@ public class MainPaneController extends AbstractController {
     @FXML
     private Label euroCurrency;
     @FXML
-    private TableView<ImageModel> imagesTableView;
+    private TableView<BlankImageModel> imagesTableView;
     @FXML
     private TableColumn<ImageModel, String> pathToFile;
     @FXML
@@ -121,14 +121,18 @@ public class MainPaneController extends AbstractController {
 
     //Layout tab
     @FXML
-    private Button startLayoutButton;
+    private Button startGenerationButton;
+    @FXML
+    private Button selectXlsToLoad;
+    @FXML
+    private Button aboutButton;
 
     private TableColumn deleteButtonColumn;
 
     private List<ImageModel> imageModelList;
     private CurrencyDTO currencyDTO;
     private CurrencyTranslator currencyTranslator;
-    private ObservableList<ImageModel> imageModels;
+    private ObservableList<BlankImageModel> imageModels;
     private static final String UAH_SUFFIX = " UAH";
     private static final double RGB_BYTES = 255d;
 
@@ -203,9 +207,13 @@ public class MainPaneController extends AbstractController {
             xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
         });
 
-        startLayoutButton.setOnAction(event -> {
-            WebServiceTranslator translator = new WebServiceTranslator();
-            translator.translate();
+        startGenerationButton.setOnAction(event -> {
+            System.out.println("Generation button pressed");
+        });
+
+        aboutButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, bundle.getString("information.xls"), ButtonType.OK);
+            alert.showAndWait();
         });
     }
 
@@ -394,7 +402,7 @@ public class MainPaneController extends AbstractController {
         }
     }
 
-    private class SpotColorConverter extends StringConverter<SpotColor> {
+    protected class SpotColorConverter extends StringConverter<SpotColor> {
 
         @Override
         public String toString(SpotColor object) {

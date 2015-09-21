@@ -1,6 +1,7 @@
 package export.impl;
 
-import coolor.ImageModel;
+import coolor.models.BlankImageModel;
+import coolor.models.ImageModel;
 import export.XlsCRUD;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -25,7 +26,7 @@ public class XlsFilesManager implements XlsCRUD {
     private static final Object[] COLUMN_NAMES = {"Path to file", "File Name", "Width", "Height", "Color space", "Quantity", "Position area"};
 
     @Override
-    public File createXlsFile(String absolutePath, List<ImageModel> dataToFile) {
+    public File createXlsFile(String absolutePath, List<BlankImageModel> dataToFile) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet(DEFAULT_NAME);
         Map<String, Object[]> dataMap = createDataMap(dataToFile, true);
@@ -40,12 +41,12 @@ public class XlsFilesManager implements XlsCRUD {
     }
 
     @Override
-    public List<ImageModel> readCompaniesListFromXlsFile(FileInputStream fis) {
+    public List<BlankImageModel> readCompaniesListFromXlsFile(FileInputStream fis) {
         return getDataFromXlsFile(fis);
     }
 
     @Override
-    public boolean updateXlsFile(File existFile, List<ImageModel> newData) {
+    public boolean updateXlsFile(File existFile, List<BlankImageModel> newData) {
         try {
             FileInputStream fis = new FileInputStream(existFile);
             HSSFWorkbook workbook = new HSSFWorkbook(fis);
@@ -69,14 +70,14 @@ public class XlsFilesManager implements XlsCRUD {
         return false;
     }
 
-    private Map<String, Object[]> createDataMap(List<ImageModel> dataList, boolean isNewMap) {
+    private Map<String, Object[]> createDataMap(List<? extends BlankImageModel> dataList, boolean isNewMap) {
         if (!dataList.isEmpty()) {
             Map<String, Object[]> result = new HashMap<String, Object[]>();
             if (isNewMap) {
                 result.put("0", COLUMN_NAMES);
             }
             for (int i = 0; i < dataList.size(); i++) {
-                ImageModel tempImageModel = dataList.get(i);
+                ImageModel tempImageModel = (ImageModel) dataList.get(i);
                 List<Object> objectList = new LinkedList<Object>();
                 objectList.add(tempImageModel.getPathToFile());
                 objectList.add(tempImageModel.getName());
@@ -116,8 +117,8 @@ public class XlsFilesManager implements XlsCRUD {
         }
     }
 
-    private List<ImageModel> getDataFromXlsFile(FileInputStream fis) {
-        List<ImageModel> results = new LinkedList<ImageModel>();
+    private List<BlankImageModel> getDataFromXlsFile(FileInputStream fis) {
+        List<BlankImageModel> results = new LinkedList<BlankImageModel>();
         try {
             HSSFWorkbook workbook = new HSSFWorkbook(fis);
             HSSFSheet sheet = workbook.getSheetAt(0);

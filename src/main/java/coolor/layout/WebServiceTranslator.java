@@ -33,7 +33,12 @@ public class WebServiceTranslator {
     public WebServiceTranslator() {
     }
 
-    public void translate() {
+    public void translate(MediaCanvas canvas, boolean isRaw){
+        StringBuilder requestToApi = new StringBuilder();
+        requestToApi.append("bins=0:100:");
+    }
+
+    public void translateToPreview() {
         HttpURLConnection conn = prepareConnection("http://www.packit4me.com/api/call/preview");
         try {
             assert conn != null;
@@ -47,12 +52,12 @@ public class WebServiceTranslator {
 
             InputStream is = conn.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            Path directory = Files.createTempDirectory("javatmp");
-            Path tempFile = Files.createTempFile(directory, "pathFile", ".html");
-            File file = Files.createTempFile(directory, "temp", ".html").toFile();
-            FileWriter writer = new FileWriter(file);
+//            Path directory = Files.createTempDirectory("javatmp");
+//            File file = Files.createTempFile(directory, "temp", ".html").toFile();
+            File file1 = new File(System.getProperty("user.dir")+"\\temp.html");
+            FileWriter writer = new FileWriter(file1);
             BufferedWriter out = new BufferedWriter(writer);
-            System.out.println(file.getAbsolutePath());
+            System.out.println(file1.getAbsolutePath());
             String line;
             while ((line = rd.readLine()) != null) {
                 if (line.contains("<body>")) {
@@ -62,22 +67,16 @@ public class WebServiceTranslator {
                             "<h3>Use mouse scroll to zoom in/out. Hold RMB and drag mouse to navigate on length of canvas</h3>");
                 }
                 if (line.contains("three.min.js")) {
-                    Files.write(tempFile, getScriptText("/js/three.min.js").getBytes());
                     out.write(getScriptText("/js/three.min.js"));
                 } else if (line.contains("TrackballControls.js")) {
-                    Files.write(tempFile, getScriptText("/js/TrackballControls.js").getBytes());
                     out.write(getScriptText("/js/TrackballControls.js"));
                 } else if (line.contains("Detector.js")) {
-                    Files.write(tempFile, getScriptText("/js/Detector.js").getBytes());
                     out.write(getScriptText("/js/Detector.js"));
                 } else if (line.contains("stats.min.js")) {
-                    Files.write(tempFile, getScriptText("/js/stats.min.js").getBytes());
                     out.write(getScriptText("/js/stats.min.js"));
                 } else if (line.contains("button")) {
                     System.out.println("button dawn");
                 } else {
-                    Files.write(tempFile, line.getBytes());
-                    Files.write(tempFile, "\n".getBytes());
                     out.write(line);
                     out.write("\n");
                 }
@@ -85,8 +84,7 @@ public class WebServiceTranslator {
             rd.close();
             out.close();
             writer.close();
-            Desktop.getDesktop().browse(file.toURI());
-            Desktop.getDesktop().browse(tempFile.toUri());
+            Desktop.getDesktop().browse(file1.toURI());
         } catch(IOException e) {
             e.printStackTrace();
         }
