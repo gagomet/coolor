@@ -129,19 +129,21 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <Button fx:id="startGenerationButton" layoutX="504.0" layoutY="208.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="277.0" text="Generate" />
-                  <Label layoutX="50.0" layoutY="38.0" prefHeight="27.0" prefWidth="60.0" text="Height, mm" />
-                  <Label layoutX="314.0" layoutY="38.0" prefHeight="27.0" prefWidth="60.0" text="Width, mm" />
-                  <TextField layoutX="112.0" layoutY="41.0" />
-                  <TextField layoutX="374.0" layoutY="41.0" />
                   <Label layoutX="29.0" layoutY="148.0" prefHeight="27.0" prefWidth="201.0" text="Path to save blank images:" />
-                  <Label layoutX="192.0" layoutY="148.0" prefHeight="28.0" prefWidth="381.0" text="No spicified path" />
-                  <Button layoutX="656.0" layoutY="146.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="124.0" text="Choose file" />
-                  <TextArea layoutX="11.0" layoutY="271.0" prefHeight="279.0" prefWidth="772.0" />
+                  <Label fx:id="folderToSavePath" layoutX="192.0" layoutY="148.0" prefHeight="28.0" prefWidth="381.0" text="No specified path" />
+                  <Button fx:id="pathToSaveButton" layoutX="656.0" layoutY="146.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="124.0" text="Choose file" />
+                  <TextArea fx:id="logs" layoutX="11.0" layoutY="271.0" prefHeight="279.0" prefWidth="772.0" />
                   <Label layoutX="12.0" layoutY="248.0" prefHeight="23.0" prefWidth="125.0" text="Logging" />
-                  <Button fx:id="selectXlsToLoad" layoutX="656.0" layoutY="90.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="124.0" text="Choose file" />
-                  <Label layoutX="257.0" layoutY="92.0" prefHeight="28.0" prefWidth="287.0" text="No spicified path" />
+                  <Button fx:id="selectXlsToLoadButton" layoutX="656.0" layoutY="90.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="124.0" text="Choose file" />
+                  <Label fx:id="fileToLoadPath" layoutX="257.0" layoutY="92.0" prefHeight="28.0" prefWidth="287.0" text="No specified path" />
                   <Label layoutX="29.0" layoutY="92.0" prefHeight="27.0" prefWidth="228.0" text="Specified *.xls, describes images parameters" />
                   <Button fx:id="aboutButton" layoutX="625.0" layoutY="90.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="17.0" text="?" />
+                  <Button fx:id="downloadPatternButton" layoutX="342.0" layoutY="208.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="154.0" text="Download xls pattern file" />
+                  <Label layoutX="59.0" layoutY="14.0" prefHeight="65.0" prefWidth="682.0" text="You can generate blank files in TIFF format, based on previously prepared XLS template file with Your data.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
         </content>

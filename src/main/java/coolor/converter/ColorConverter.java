@@ -6,8 +6,6 @@ import coolor.colorspaces.Hex;
 import coolor.colorspaces.RGB;
 
 import java.awt.Color;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 /**
  * Created by Padonag on 24.09.2014.

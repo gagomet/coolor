@@ -1,5 +1,6 @@
 package coolor.fx;
 
+import coolor.generator.BlankImageGenerator;
 import coolor.models.BlankImageModel;
 import coolor.models.ImageModel;
 import coolor.area.FolderReader;
@@ -11,6 +12,7 @@ import coolor.parcer.ParsePantoneCsv;
 import coolor.parcer.ParseXmlOracals;
 import coolor.translate.CurrencyTranslator;
 import export.XlsCRUD;
+import export.impl.BlankImagesFileLoadManager;
 import export.impl.XlsFilesManager;
 
 import javafx.collections.FXCollections;
@@ -25,6 +27,8 @@ import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -84,7 +88,7 @@ public class MainPaneController extends AbstractController {
     private RadioButton radioEuro;
     @FXML
     private MenuBar menuBar;
-
+    //***************************************************************************
     //    Color mapper tab
     @FXML
     private ChoiceBox<SpotColor> spotColorsChoiceBox;
@@ -118,14 +122,24 @@ public class MainPaneController extends AbstractController {
     private Label roundedCmykLabel;
     @FXML
     private ColorPicker colorPicker;
-
+    //***************************************************************************
     //Layout tab
     @FXML
     private Button startGenerationButton;
     @FXML
-    private Button selectXlsToLoad;
+    private Button selectXlsToLoadButton;
     @FXML
     private Button aboutButton;
+    @FXML
+    private Button downloadPatternButton;
+    @FXML
+    private Button pathToSaveButton;
+    @FXML
+    private Label folderToSavePath;
+    @FXML
+    private Label fileToLoadPath;
+    @FXML
+    private TextArea logs;
 
     private TableColumn deleteButtonColumn;
 
@@ -209,11 +223,51 @@ public class MainPaneController extends AbstractController {
 
         startGenerationButton.setOnAction(event -> {
             System.out.println("Generation button pressed");
+            BlankImagesFileLoadManager manager = new BlankImagesFileLoadManager();
+                checkPathInLabel(fileToLoadPath);
+                checkPathInLabel(folderToSavePath);
+            try {
+                List<BlankImageModel> models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
+                BlankImageGenerator generator = new BlankImageGenerator();
+                generator.generateBlankImages(folderToSavePath.getText(), models, logs);
+            } catch(FileNotFoundException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "File not found!", ButtonType.OK);
+                alert.showAndWait();
+                e.printStackTrace();
+            }
         });
 
         aboutButton.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, bundle.getString("information.xls"), ButtonType.OK);
             alert.showAndWait();
+        });
+
+        pathToSaveButton.setOnAction(event -> {
+            System.out.println("Load to xls button pressed");
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("folder.to.save.dialog");
+            directoryChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
+            File selectedFile = directoryChooser.showDialog(starter.getPrimaryStage());
+            folderToSavePath.setText(selectedFile.getAbsolutePath());
+        });
+
+        downloadPatternButton.setOnAction(event -> {
+            XlsCRUD xlsManager = new BlankImagesFileLoadManager();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("folder.to.save.dialog");
+            fileChooser.setInitialFileName(BlankImagesFileLoadManager.DEFAULT_NAME);
+            fileChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
+            File selectedFile = fileChooser.showSaveDialog(starter.getPrimaryStage());
+            xlsManager.createXlsFile(selectedFile.getAbsolutePath(), imagesTableView.getItems());
+            fileToLoadPath.setText(selectedFile.getAbsolutePath());
+        });
+
+        selectXlsToLoadButton.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("folder.to.save.dialog");
+            fileChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
+            File selectedFile = fileChooser.showOpenDialog(starter.getPrimaryStage());
+            fileToLoadPath.setText(selectedFile.getAbsolutePath());
         });
     }
 
@@ -373,6 +427,13 @@ public class MainPaneController extends AbstractController {
                      SpotColor spotColor = spotColorsList.get(new_value.intValue());
                      handleSpotColorChanges(spotColor);
                  });
+    }
+
+    private void checkPathInLabel(Label label){
+        if("No specified path".equals(label.getText())){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Please choose path in " + label.getId(), ButtonType.OK);
+            alert.showAndWait();
+        }
     }
 
 

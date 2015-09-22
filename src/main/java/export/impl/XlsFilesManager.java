@@ -17,31 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class XlsFilesManager implements XlsCRUD {
+public class XlsFilesManager extends AbstractFilesManager {
 
-    private static final Logger log = Logger.getLogger(XlsFilesManager.class);
-    private static final String EMPTY_STRING = "";
-    private static final String XLS_EXTENSION = "xls";
-    public static final String DEFAULT_NAME = "ImagesList";
     private static final Object[] COLUMN_NAMES = {"Path to file", "File Name", "Width", "Height", "Color space", "Quantity", "Position area"};
 
     @Override
-    public File createXlsFile(String absolutePath, List<BlankImageModel> dataToFile) {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet(DEFAULT_NAME);
-        Map<String, Object[]> dataMap = createDataMap(dataToFile, true);
-        fillXlsSheetWithStringData(dataMap, sheet, 0);
-        File outputFile = new File(absolutePath + "." + XLS_EXTENSION);
-        if (outputFile.exists()) {
-            log.warn("File already exist!!!");
-            return null;
-        }
-        writeWorkbookToFile(outputFile, workbook);
-        return outputFile;
-    }
-
-    @Override
-    public List<BlankImageModel> readCompaniesListFromXlsFile(FileInputStream fis) {
+    public List<BlankImageModel> readDataFromXlsFile(FileInputStream fis) {
         return getDataFromXlsFile(fis);
     }
 
@@ -70,7 +51,7 @@ public class XlsFilesManager implements XlsCRUD {
         return false;
     }
 
-    private Map<String, Object[]> createDataMap(List<? extends BlankImageModel> dataList, boolean isNewMap) {
+    protected Map<String, Object[]> createDataMap(List<? extends BlankImageModel> dataList, boolean isNewMap) {
         if (!dataList.isEmpty()) {
             Map<String, Object[]> result = new HashMap<String, Object[]>();
             if (isNewMap) {
@@ -93,29 +74,6 @@ public class XlsFilesManager implements XlsCRUD {
         return Collections.EMPTY_MAP;
     }
 
-    private void fillXlsSheetWithStringData(Map<String, Object[]> dataMap, HSSFSheet sheet, int rowNumber) {
-        Set<String> keySet = dataMap.keySet();
-        int rowNum = rowNumber;
-        for (String key : keySet) {
-            Row row = sheet.createRow(rowNum++);
-            Object[] rowData = dataMap.get(key);
-            int cellNum = 0;
-            for (Object tempObject : rowData) {
-                Cell cell = row.createCell(cellNum++);
-                cell.setCellValue(tempObject.toString());
-            }
-        }
-    }
-
-    private void writeWorkbookToFile(File file, HSSFWorkbook workbook) {
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            workbook.write(fos);
-            fos.close();
-        } catch(IOException e) {
-            log.debug("Throwing IO Exception", e);
-        }
-    }
 
     private List<BlankImageModel> getDataFromXlsFile(FileInputStream fis) {
         List<BlankImageModel> results = new LinkedList<BlankImageModel>();
@@ -139,23 +97,5 @@ public class XlsFilesManager implements XlsCRUD {
             log.debug("Throwing IO Exception", e);
         }
         return results;
-    }
-
-    private Object[] parseRow(HSSFRow row) {
-        List<String> result = new LinkedList<String>();
-        short rowSize = row.getLastCellNum();
-        for (int i = 0; i < rowSize; ++i) {
-            HSSFCell cell = row.getCell(i);
-            String value;
-            try {
-                value = cell.getStringCellValue();
-            } catch(NullPointerException e) {
-                result.add(EMPTY_STRING);
-                continue;
-            }
-            result.add(cell.getStringCellValue());
-            System.out.println("  ");
-        }
-        return result.toArray();
     }
 }

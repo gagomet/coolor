@@ -10,7 +10,7 @@ import java.util.List;
 public interface XlsCRUD {
     public File createXlsFile(String name, List<BlankImageModel> dataToFile);
 
-    public List<BlankImageModel> readCompaniesListFromXlsFile(FileInputStream fis);
+    public List<BlankImageModel> readDataFromXlsFile(FileInputStream fis);
 
     public boolean updateXlsFile(File existFile, List<BlankImageModel> newData);
 
