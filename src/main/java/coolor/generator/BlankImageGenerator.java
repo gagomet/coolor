@@ -45,6 +45,8 @@ public class BlankImageGenerator {
         StringBuilder builder = new StringBuilder();
         builder.append(imageModel.getCode());
         builder.append("_");
+        builder.append(imageModel.getCity());
+        builder.append("_");
         builder.append(imageModel.getName());
         builder.append("_");
         builder.append(imageModel.getWidth());
