@@ -144,6 +144,8 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
+                  <ProgressBar fx:id="processing" layoutX="43.0" layoutY="222.0" prefHeight="17.0" prefWidth="247.0" progress="0.0" />
+                  <Label fx:id="processingDesc" layoutX="44.0" layoutY="201.0" prefHeight="14.0" prefWidth="245.0" text="Processing..." />
                </children>
             </AnchorPane>
         </content>

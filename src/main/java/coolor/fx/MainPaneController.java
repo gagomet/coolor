@@ -15,8 +15,11 @@ import export.XlsCRUD;
 import export.impl.BlankImagesFileLoadManager;
 import export.impl.XlsFilesManager;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -140,6 +143,10 @@ public class MainPaneController extends AbstractController {
     private Label fileToLoadPath;
     @FXML
     private TextArea logs;
+    @FXML
+    private ProgressBar processing;
+    @FXML
+    private Label processingDesc;
 
     private TableColumn deleteButtonColumn;
 
@@ -149,6 +156,8 @@ public class MainPaneController extends AbstractController {
     private ObservableList<BlankImageModel> imageModels;
     private static final String UAH_SUFFIX = " UAH";
     private static final double RGB_BYTES = 255d;
+
+    private Task generation;
 
     public MainPaneController() {
     }
@@ -178,6 +187,8 @@ public class MainPaneController extends AbstractController {
         deleteButtonColumn = new TableColumn("Delete entry");
         deleteButtonColumn.setSortable(false);
         colorsPane.setVisible(false);
+        processing.setVisible(false);
+        processingDesc.setVisible(false);
     }
 
     protected void initDeleteButtons() {
@@ -222,19 +233,14 @@ public class MainPaneController extends AbstractController {
         });
 
         startGenerationButton.setOnAction(event -> {
-            System.out.println("Generation button pressed");
-            BlankImagesFileLoadManager manager = new BlankImagesFileLoadManager();
-                checkPathInLabel(fileToLoadPath);
-                checkPathInLabel(folderToSavePath);
-            try {
-                List<BlankImageModel> models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
-                BlankImageGenerator generator = new BlankImageGenerator();
-                generator.generateBlankImages(folderToSavePath.getText(), models, logs);
-            } catch(FileNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "File not found!", ButtonType.OK);
-                alert.showAndWait();
-                e.printStackTrace();
-            }
+            processing.setVisible(true);
+            processingDesc.setVisible(true);
+            generation = generationTask();
+            generation.messageProperty().addListener((observable, oldValue, newValue) -> {
+                processingDesc.setText(newValue);
+            });
+            processing.progressProperty().bind(generation.progressProperty());
+            new Thread(generation).start();
         });
 
         aboutButton.setOnAction(event -> {
@@ -434,6 +440,32 @@ public class MainPaneController extends AbstractController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Please choose path in " + label.getId(), ButtonType.OK);
             alert.showAndWait();
         }
+    }
+
+    private Task generationTask(){
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                List<BlankImageModel> models = new ArrayList<>();
+                System.out.println("Generation button pressed");
+                BlankImagesFileLoadManager manager = new BlankImagesFileLoadManager();
+                checkPathInLabel(fileToLoadPath);
+                checkPathInLabel(folderToSavePath);
+                try {
+                     models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
+                    BlankImageGenerator generator = new BlankImageGenerator();
+                    generator.generateBlankImages(folderToSavePath.getText(), models, logs);
+                } catch(FileNotFoundException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "File not found!", ButtonType.OK);
+                    alert.showAndWait();
+                    e.printStackTrace();
+                }
+                processing.setVisible(false);
+                processingDesc.setVisible(false);
+                logs.appendText("Processing " + models.size() + " files succesfully finished");
+                return true;
+            }
+        };
     }
 
 
