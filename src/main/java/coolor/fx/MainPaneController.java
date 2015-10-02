@@ -236,10 +236,6 @@ public class MainPaneController extends AbstractController {
             processing.setVisible(true);
             processingDesc.setVisible(true);
             generation = generationTask();
-            generation.messageProperty().addListener((observable, oldValue, newValue) -> {
-                processingDesc.setText(newValue);
-            });
-            processing.progressProperty().bind(generation.progressProperty());
             new Thread(generation).start();
         });
 
@@ -452,9 +448,9 @@ public class MainPaneController extends AbstractController {
                 checkPathInLabel(fileToLoadPath);
                 checkPathInLabel(folderToSavePath);
                 try {
-                     models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
+                    models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
                     BlankImageGenerator generator = new BlankImageGenerator();
-                    generator.generateBlankImages(folderToSavePath.getText(), models, logs);
+                    generator.generateBlankImages(folderToSavePath.getText(), models, logs, processing, processingDesc);
                 } catch(FileNotFoundException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "File not found!", ButtonType.OK);
                     alert.showAndWait();

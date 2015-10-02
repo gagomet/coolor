@@ -1,6 +1,8 @@
 package coolor.generator;
 
 import coolor.models.BlankImageModel;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageWriteException;
@@ -16,10 +18,14 @@ import java.util.List;
  */
 public class BlankImageGenerator {
 
-    public void generateBlankImages(String pathToFolder, List<BlankImageModel> imagesInfo, TextArea logs) {
+    public void generateBlankImages(String pathToFolder, List<BlankImageModel> imagesInfo, TextArea logs, ProgressBar progressBar, Label processingLabel) {
         System.out.println("generator generates");
-        for (BlankImageModel blankImageModel : imagesInfo) {
-            generateImage(pathToFolder, blankImageModel, logs);
+        float progressStep = 1f/imagesInfo.size();
+        float totalProgress = 0;
+        for (int i = 0; i < imagesInfo.size(); i++) {
+            generateImage(pathToFolder, imagesInfo.get(i), logs);
+            totalProgress = totalProgress + progressStep;
+            progressBar.setProgress(totalProgress);
         }
     }
 
