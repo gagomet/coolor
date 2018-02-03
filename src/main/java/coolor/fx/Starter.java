@@ -2,6 +2,7 @@ package coolor.fx;
 
 import coolor.translate.UserProxy;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
@@ -23,12 +24,6 @@ public class Starter extends Application {
     private UserProxy userProxy;
 
     public Starter() {
-//        Map<String, CMYK> preloaded = ParseXml.getOracalsMap(new File(Starter.class.getClassLoader().getResource("oracals.xml").getPath()));
-//        for (String s : preloaded.keySet()) {
-//            SpotColorModel tempModel = new SpotColorModel(s, preloaded.get(s));
-//            predefinedSpots.add(tempModel);
-//        }
-//        System.out.println("hui");
     }
 
     @Override
@@ -36,6 +31,12 @@ public class Starter extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(bundle.getString("main.frame.name"));
         initRootLayout();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        Platform.exit();
+        System.exit(0);
     }
 
     /**

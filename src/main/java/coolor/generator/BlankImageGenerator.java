@@ -1,6 +1,7 @@
 package coolor.generator;
 
 import coolor.models.BlankImageModel;
+import coolor.type.AtomicFloat;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
@@ -13,20 +14,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by KAKolesnikov on 2015-09-22.
- */
 public class BlankImageGenerator {
 
     public void generateBlankImages(String pathToFolder, List<BlankImageModel> imagesInfo, TextArea logs, ProgressBar progressBar, Label processingLabel) {
         System.out.println("generator generates");
         float progressStep = 1f/imagesInfo.size();
-        float totalProgress = 0;
-        for (int i = 0; i < imagesInfo.size(); i++) {
-            generateImage(pathToFolder, imagesInfo.get(i), logs);
-            totalProgress = totalProgress + progressStep;
-            progressBar.setProgress(totalProgress);
-        }
+        AtomicFloat atomicProgress = new AtomicFloat();
+
+        imagesInfo.parallelStream().forEach(info -> {
+            generateImage(pathToFolder, info, logs);
+            float preProgress = atomicProgress.get();
+            atomicProgress.set(preProgress + progressStep);
+        });
+
     }
 
     private void generateImage(String pathToFolder, BlankImageModel imageInfo, TextArea logs) {

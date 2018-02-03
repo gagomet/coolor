@@ -15,13 +15,27 @@ import export.XlsCRUD;
 import export.impl.BlankImagesFileLoadManager;
 import export.impl.XlsFilesManager;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -37,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
 
 
 /**
@@ -168,16 +182,16 @@ public class MainPaneController extends AbstractController {
         fileName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         quantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
         width.setCellValueFactory(cellData -> cellData.getValue().widthProperty().floatValue() > 0
-                                              ? cellData.getValue()
-                                                        .widthProperty()
-                                                        .asString()
-                                              : cellData.getValue().undefinedProperty());
+                ? cellData.getValue()
+                .widthProperty()
+                .asString()
+                : cellData.getValue().undefinedProperty());
         height.setCellValueFactory(
                 cellData -> cellData.getValue().heightProperty().floatValue() > 0
-                            ? cellData.getValue()
-                                      .heightProperty()
-                                      .asString()
-                            : cellData.getValue().undefinedProperty());
+                        ? cellData.getValue()
+                        .heightProperty()
+                        .asString()
+                        : cellData.getValue().undefinedProperty());
         area.setCellValueFactory(cellData -> cellData.getValue().areaProperty());
         cost.setCellValueFactory(cellData -> cellData.getValue().costProperty());
         exportToExcel.setDisable(true);
@@ -215,7 +229,7 @@ public class MainPaneController extends AbstractController {
             File selectedDirectory = chooser.showDialog(starter.getPrimaryStage());
             if (selectedDirectory == null) {
                 starter.getErrorPopup(bundle.getString("error.choose.folder"));
-            } else {
+            } else if (selectedDirectory.exists() && selectedDirectory.canWrite()) {
                 pathToFolder.setText(selectedDirectory.getAbsolutePath());
             }
             //TODO add handling choice nothing
@@ -250,7 +264,9 @@ public class MainPaneController extends AbstractController {
             directoryChooser.setTitle("folder.to.save.dialog");
             directoryChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
             File selectedFile = directoryChooser.showDialog(starter.getPrimaryStage());
-            folderToSavePath.setText(selectedFile.getAbsolutePath());
+            if (Objects.nonNull(selectedFile) && selectedFile.exists()) {
+                folderToSavePath.setText(selectedFile.getAbsolutePath());
+            }
         });
 
         downloadPatternButton.setOnAction(event -> {
@@ -269,7 +285,9 @@ public class MainPaneController extends AbstractController {
             fileChooser.setTitle("folder.to.save.dialog");
             fileChooser.setInitialDirectory(new File(bundle.getString("initial.folder")));
             File selectedFile = fileChooser.showOpenDialog(starter.getPrimaryStage());
-            fileToLoadPath.setText(selectedFile.getAbsolutePath());
+            if (Objects.nonNull(selectedFile) && selectedFile.exists()) {
+                fileToLoadPath.setText(selectedFile.getAbsolutePath());
+            }
         });
     }
 
@@ -288,7 +306,7 @@ public class MainPaneController extends AbstractController {
                 currencyTranslator = new CurrencyTranslator(starter.getUserProxy());
                 try {
                     currencyTranslator.translateCourses();
-                } catch(IOException e) {
+                } catch (IOException e) {
                     log.error("IO exception!");
                     starter.getErrorPopup(bundle.getString("error.connection"));
                     calculateCost.setSelected(false);
@@ -325,10 +343,10 @@ public class MainPaneController extends AbstractController {
         spotColorsChoiceBox.setConverter(new SpotColorConverter());
         spotColorsChoiceBox.setItems(oracalsObservableList);
         spotColorsChoiceBox.getSelectionModel().selectedIndexProperty()
-                           .addListener((ov, value, new_value) -> {
-                               SpotColor spotColor = oracalsColorList.get(new_value.intValue());
-                               handleSpotColorChanges(spotColor);
-                           });
+                .addListener((ov, value, new_value) -> {
+                    SpotColor spotColor = oracalsColorList.get(new_value.intValue());
+                    handleSpotColorChanges(spotColor);
+                });
         initChoiceBoxByCsvFileName(pantoneCoatedChoicebox, "/pantone-coated.csv", null);
         initChoiceBoxByCsvFileName(pantoneUncoatedChoicebox, "/pantone-uncoated.csv", null);
         initChoiceBoxByCsvFileName(pantoneColorOfTheYearChoicebox, "/pantone-color-of-the-year.csv", null);
@@ -346,7 +364,7 @@ public class MainPaneController extends AbstractController {
         initChoiceBoxByReadyList(ralColorsChoiceBox, parsedRals);
     }
 
-    private void initLayoutPane(){
+    private void initLayoutPane() {
 
     }
 
@@ -425,20 +443,20 @@ public class MainPaneController extends AbstractController {
         choiceBox.setConverter(new SpotColorConverter());
         choiceBox.setItems(spotColorsObservableList);
         choiceBox.getSelectionModel().selectedIndexProperty()
-                 .addListener((ov, value, new_value) -> {
-                     SpotColor spotColor = spotColorsList.get(new_value.intValue());
-                     handleSpotColorChanges(spotColor);
-                 });
+                .addListener((ov, value, new_value) -> {
+                    SpotColor spotColor = spotColorsList.get(new_value.intValue());
+                    handleSpotColorChanges(spotColor);
+                });
     }
 
-    private void checkPathInLabel(Label label){
-        if("No specified path".equals(label.getText())){
+    private void checkPathInLabel(Label label) {
+        if ("No specified path".equals(label.getText())) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Please choose path in " + label.getId(), ButtonType.OK);
             alert.showAndWait();
         }
     }
 
-    private Task generationTask(){
+    private Task generationTask() {
         return new Task() {
             @Override
             protected Object call() throws Exception {
@@ -451,7 +469,7 @@ public class MainPaneController extends AbstractController {
                     models = manager.readDataFromXlsFile(new FileInputStream(new File(fileToLoadPath.getText())));
                     BlankImageGenerator generator = new BlankImageGenerator();
                     generator.generateBlankImages(folderToSavePath.getText(), models, logs, processing, processingDesc);
-                } catch(FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "File not found!", ButtonType.OK);
                     alert.showAndWait();
                     e.printStackTrace();
